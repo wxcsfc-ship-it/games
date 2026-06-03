@@ -1,0 +1,84 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/auto_mover.tscn" id="2_auto_mover"]
+[ext_resource type="Script" path="res://scripts/exit.gd" id="3_exit"]
+[ext_resource type="PackedScene" path="res://scenes/ability_ui.tscn" id="4_ability_ui"]
+[ext_resource type="PackedScene" path="res://levels/level_09.tscn" id="5_next_level"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_upper_floor"]
+size = Vector2(280, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lower_floor"]
+size = Vector2(400, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit"]
+size = Vector2(48, 64)
+
+[node name="Level08" type="Node2D"]
+script = ExtResource("1_main")
+auto_mover_scene = ExtResource("2_auto_mover")
+total_to_spawn = 1
+spawn_interval = 1.5
+blocker_enabled = false
+blocker_uses = 0
+builder_enabled = false
+builder_uses = 0
+digger_enabled = false
+digger_uses = 0
+parachuter_enabled = true
+parachuter_uses = 1
+rescue_goal = 1
+time_limit_seconds = 25.0
+next_level_scene = ExtResource("5_next_level")
+
+[node name="AbilityUI" parent="." instance=ExtResource("4_ability_ui")]
+
+[node name="SpawnTimer" type="Timer" parent="."]
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(80, 80)
+
+[node name="Visual" type="Polygon2D" parent="SpawnPoint"]
+color = Color(1, 0.55, 0.15, 1)
+polygon = PackedVector2Array(0, -12, 12, 10, -12, 10)
+
+[node name="UpperFloor" type="StaticBody2D" parent="."]
+position = Vector2(160, 180)
+
+[node name="Visual" type="Polygon2D" parent="UpperFloor"]
+color = Color(0.35, 0.45, 0.38, 1)
+polygon = PackedVector2Array(-140, -16, 140, -16, 140, 16, -140, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="UpperFloor"]
+shape = SubResource("RectangleShape2D_upper_floor")
+
+[node name="LowerFloor" type="StaticBody2D" parent="."]
+position = Vector2(500, 400)
+
+[node name="Visual" type="Polygon2D" parent="LowerFloor"]
+color = Color(0.35, 0.45, 0.38, 1)
+polygon = PackedVector2Array(-200, -16, 200, -16, 200, 16, -200, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LowerFloor"]
+shape = SubResource("RectangleShape2D_lower_floor")
+
+[node name="DropWarning" type="Polygon2D" parent="."]
+color = Color(0.95, 0.65, 0.15, 1)
+polygon = PackedVector2Array(300, 172, 360, 172, 360, 400, 300, 400)
+
+[node name="Exit" type="Area2D" parent="."]
+position = Vector2(620, 352)
+collision_mask = 2
+script = ExtResource("3_exit")
+
+[node name="Frame" type="Polygon2D" parent="Exit"]
+color = Color(0.05, 0.35, 0.18, 1)
+polygon = PackedVector2Array(-24, -32, 24, -32, 24, 32, -24, 32)
+
+[node name="Visual" type="Polygon2D" parent="Exit"]
+color = Color(0.25, 1, 0.5, 1)
+polygon = PackedVector2Array(-19, -27, 19, -27, 19, 27, -19, 27)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exit"]
+shape = SubResource("RectangleShape2D_exit")

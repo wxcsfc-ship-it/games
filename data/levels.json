@@ -1,0 +1,397 @@
+{
+  "schema_version": 2,
+  "current_entry_scene": "res://levels/chapter_02_01.tscn",
+  "first_level_scene": "res://levels/chapter_01_01.tscn",
+  "purpose": "Phase 9 chapter rebuild active sequence. Prototype levels 01-15 remain as reference scenes but are no longer the active progression.",
+  "chapters": [
+    {
+      "id": "chapter_01",
+      "title": "First Rescue",
+      "purpose": "Teach automatic movement, exits, pit preview, and wall-turn behavior before abilities appear."
+    },
+    {
+      "id": "chapter_02",
+      "title": "Holding the Crowd",
+      "purpose": "Teach Blocker as the first player-controlled direction and crowd-control ability."
+    }
+  ],
+  "levels": [
+    {
+      "id": "chapter_01_01",
+      "chapter_id": "chapter_01",
+      "scene": "res://levels/chapter_01_01.tscn",
+      "next_scene": "res://levels/chapter_01_02.tscn",
+      "title": "Walk Home",
+      "teaching_goal": "Introduce automatic walking and the exit in a calm first level.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 1.4
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 24.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "One continuous floor leads directly to the exit.",
+        "No pit, wall, or ability is present.",
+        "The level confirms spawning, automatic walking, and rescue counting."
+      ],
+      "intended_solution": [
+        "Do nothing.",
+        "All movers walk into the exit."
+      ],
+      "failure_logic": [
+        "Failure should only happen if the time limit is too short or the exit is misplaced."
+      ]
+    },
+    {
+      "id": "chapter_01_02",
+      "chapter_id": "chapter_01",
+      "scene": "res://levels/chapter_01_02.tscn",
+      "next_scene": "res://levels/chapter_01_03.tscn",
+      "title": "Mind the Edge",
+      "teaching_goal": "Preview pits as visible danger without requiring an ability yet.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 1.4
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 24.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "The exit is placed before a clearly marked red pit.",
+        "The pit is visible as a future warning but should not be reached in normal play.",
+        "The player learns that red gaps are dangerous."
+      ],
+      "intended_solution": [
+        "Do nothing.",
+        "All movers enter the exit before the pit."
+      ],
+      "failure_logic": [
+        "If the exit route is missed in layout testing, movers continue into the visible pit."
+      ]
+    },
+    {
+      "id": "chapter_01_03",
+      "chapter_id": "chapter_01",
+      "scene": "res://levels/chapter_01_03.tscn",
+      "next_scene": "res://levels/chapter_01_04.tscn",
+      "title": "The Long Floor",
+      "teaching_goal": "Increase walking distance and spawned mover count while staying ability-free.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 4,
+        "spawn_interval": 1.8
+      },
+      "win_conditions": {
+        "rescue_goal": 4,
+        "time_limit_seconds": 28.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "A longer floor gives the player time to observe the queue.",
+        "Four movers spawn with a slower rhythm.",
+        "No ability or terrain hazard is required."
+      ],
+      "intended_solution": [
+        "Do nothing.",
+        "Watch all four movers reach the far exit."
+      ],
+      "failure_logic": [
+        "The only intended failure is a time-limit tuning issue."
+      ]
+    },
+    {
+      "id": "chapter_01_04",
+      "chapter_id": "chapter_01",
+      "scene": "res://levels/chapter_01_04.tscn",
+      "next_scene": "res://levels/chapter_02_01.tscn",
+      "title": "First Turn",
+      "teaching_goal": "Teach that movers turn around when they hit a wall.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 1.6
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 28.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "Movers spawn near the middle and initially walk right.",
+        "A red wall on the right turns them back left.",
+        "The exit is on the left side of the same floor."
+      ],
+      "intended_solution": [
+        "Do nothing.",
+        "Movers hit the wall, turn left, and enter the exit."
+      ],
+      "failure_logic": [
+        "Bad wall or exit placement can trap movers or make the route too slow."
+      ]
+    },
+    {
+      "id": "chapter_02_01",
+      "chapter_id": "chapter_02",
+      "scene": "res://levels/chapter_02_01.tscn",
+      "next_scene": "res://levels/chapter_02_02.tscn",
+      "title": "Stand Here",
+      "teaching_goal": "Introduce Blocker as a deliberate sacrifice that turns the crowd away from danger.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 2.6
+      },
+      "win_conditions": {
+        "rescue_goal": 2,
+        "time_limit_seconds": 32.0
+      },
+      "abilities": {
+        "blocker_enabled": true,
+        "blocker_uses": 1,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "Movers spawn on a single floor and initially walk right toward a marked pit.",
+        "The exit is safely placed on the left side of the same floor.",
+        "One blocker must stand between the spawn and the right-side pit."
+      ],
+      "intended_solution": [
+        "Select Blocker.",
+        "Turn the first mover into a blocker before it reaches the pit.",
+        "The remaining movers turn left and enter the exit."
+      ],
+      "failure_logic": [
+        "No blocker means the group walks into the right pit.",
+        "Blocking too late loses the rescue target."
+      ]
+    },
+    {
+      "id": "chapter_02_02",
+      "chapter_id": "chapter_02",
+      "scene": "res://levels/chapter_02_02.tscn",
+      "next_scene": "res://levels/chapter_02_03.tscn",
+      "title": "Late Turn",
+      "teaching_goal": "Make the blocker point later and more deliberate while keeping timing readable.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 4,
+        "spawn_interval": 2.4
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 38.0
+      },
+      "abilities": {
+        "blocker_enabled": true,
+        "blocker_uses": 1,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "A longer floor gives more time to read the route.",
+        "The right pit remains the visible failure point.",
+        "The left exit rewards using the blocker as a turn marker."
+      ],
+      "intended_solution": [
+        "Wait until the lead mover approaches the right danger zone.",
+        "Apply Blocker before the pit.",
+        "Rescue the following three movers at the left exit."
+      ],
+      "failure_logic": [
+        "Blocking too early may slow the route and make the lesson weaker.",
+        "Blocking too late sends too many movers into the pit."
+      ]
+    },
+    {
+      "id": "chapter_02_03",
+      "chapter_id": "chapter_02",
+      "scene": "res://levels/chapter_02_03.tscn",
+      "next_scene": "res://levels/chapter_02_04.tscn",
+      "title": "Lower Shelf",
+      "teaching_goal": "Teach using Blocker after a drop onto a lower platform.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 4,
+        "spawn_interval": 3.5
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 45.0
+      },
+      "abilities": {
+        "blocker_enabled": true,
+        "blocker_uses": 1,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "Movers start on an upper shelf and fall to a lower shelf.",
+        "The lower exit is left of the landing area.",
+        "The right side of the lower shelf leads to a marked pit."
+      ],
+      "intended_solution": [
+        "Let the lead mover fall to the lower platform.",
+        "Apply Blocker on the lower platform before the right pit.",
+        "The remaining movers turn left into the exit."
+      ],
+      "failure_logic": [
+        "Blocking on the upper shelf stops the intended route.",
+        "Blocking after the lower danger point loses too many movers."
+      ]
+    },
+    {
+      "id": "chapter_02_04",
+      "chapter_id": "chapter_02",
+      "scene": "res://levels/chapter_02_04.tscn",
+      "next_scene": "res://levels/chapter_02_05.tscn",
+      "title": "Two-Way Lesson",
+      "teaching_goal": "Introduce two available blockers on one floor with danger visible on both sides.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 5,
+        "spawn_interval": 2.2
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 48.0
+      },
+      "abilities": {
+        "blocker_enabled": true,
+        "blocker_uses": 2,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "A wide floor has marked danger beyond both ends.",
+        "The exit is left of the spawn area.",
+        "Two blockers are available so the player can experiment with controlling the group."
+      ],
+      "intended_solution": [
+        "Use a blocker to prevent the group from walking into the first danger direction.",
+        "Use the second blocker only if needed to stabilize the group near the exit path.",
+        "Rescue three movers."
+      ],
+      "failure_logic": [
+        "Spending both blockers away from the route can prevent enough movers from reaching the exit.",
+        "Ignoring either edge eventually sends movers into danger."
+      ]
+    },
+    {
+      "id": "chapter_02_05",
+      "chapter_id": "chapter_02",
+      "scene": "res://levels/chapter_02_05.tscn",
+      "title": "Crowd Control",
+      "teaching_goal": "Summarize Chapter 2 with a wider one-blocker sacrifice puzzle.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 5,
+        "spawn_interval": 2.0
+      },
+      "win_conditions": {
+        "rescue_goal": 4,
+        "time_limit_seconds": 48.0
+      },
+      "abilities": {
+        "blocker_enabled": true,
+        "blocker_uses": 1,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "Five movers spawn on a wide floor and face a right-side pit.",
+        "The exit is on the left side.",
+        "The chapter ends by asking for one clean blocker placement and four rescues."
+      ],
+      "intended_solution": [
+        "Use the first mover as a blocker before the right pit.",
+        "Let the other four movers turn left and enter the exit."
+      ],
+      "failure_logic": [
+        "No blocker means the crowd walks into danger.",
+        "A late blocker can make the rescue target impossible."
+      ]
+    }
+  ]
+}

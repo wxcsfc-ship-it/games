@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://0x67e3eown0a" path="res://scripts/auto_mover.gd" id="1_auto_mover"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_character"]
+size = Vector2(32, 32)
+
+[node name="AutoMover" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_auto_mover")
+
+[node name="Visual" type="Polygon2D" parent="."]
+color = Color(0.2, 0.65, 1, 1)
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[node name="EyeLeft" type="Polygon2D" parent="."]
+color = Color(1, 1, 1, 1)
+polygon = PackedVector2Array(-9, -8, -3, -8, -3, -2, -9, -2)
+
+[node name="EyeRight" type="Polygon2D" parent="."]
+color = Color(1, 1, 1, 1)
+polygon = PackedVector2Array(3, -8, 9, -8, 9, -2, 3, -2)
+
+[node name="PupilLeft" type="Polygon2D" parent="."]
+color = Color(0.1, 0.1, 0.2, 1)
+polygon = PackedVector2Array(-7, -6, -5, -6, -5, -4, -7, -4)
+
+[node name="PupilRight" type="Polygon2D" parent="."]
+color = Color(0.1, 0.1, 0.2, 1)
+polygon = PackedVector2Array(5, -6, 7, -6, 7, -4, 5, -4)
+
+[node name="Parachute" type="Polygon2D" parent="."]
+visible = false
+color = Color(0.95, 0.2, 0.28, 1)
+polygon = PackedVector2Array(-24, -28, -16, -44, 0, -52, 16, -44, 24, -28)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_character")
