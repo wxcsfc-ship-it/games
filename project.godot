@@ -21,3 +21,4 @@ config/features=PackedStringArray("4.6")
 [autoload]
 
 Progress="*res://scripts/progress.gd"
+VisualAssets="*res://scripts/visual_assets.gd"

@@ -18,10 +18,14 @@ extends Node2D
 @export var next_level_scene: PackedScene
 @export_file("*.tscn") var level_select_scene := "res://scenes/level_select.tscn"
 
-const BRIDGE_LENGTH := 160.0
-const BRIDGE_HEIGHT := 16.0
-const DIG_DISTANCE := 96.0
-const DIG_HALF_HEIGHT := 56.0
+const WORLD_SCALE := 16.0
+const BRIDGE_LENGTH := 160.0 * WORLD_SCALE
+const BRIDGE_HEIGHT := 16.0 * WORLD_SCALE
+const BRIDGE_FORWARD_PADDING := 12.0 * WORLD_SCALE
+const BRIDGE_VERTICAL_OFFSET := 24.0 * WORLD_SCALE
+const DIG_DISTANCE := 96.0 * WORLD_SCALE
+const DIG_HALF_HEIGHT := 56.0 * WORLD_SCALE
+const CLICK_HALF_SIZE := 16.0 * WORLD_SCALE
 
 var generated_count := 0
 var rescued_count := 0
@@ -47,6 +51,8 @@ var elapsed_time := 0.0
 @onready var audio_manager: Node = get_node_or_null("AbilityUI/AudioManager")
 
 func _ready() -> void:
+	VisualAssets.prepare_level(self)
+
 	if blocker_enabled:
 		selected_ability = "blocker"
 	elif builder_enabled:
@@ -73,10 +79,16 @@ func _ready() -> void:
 	if blocker_button != null or builder_button != null or digger_button != null or parachuter_button != null or climber_button != null:
 		update_ability_ui()
 	if restart_button != null:
+		restart_button.icon = VisualAssets.ICON_RESTART
+		restart_button.expand_icon = true
 		restart_button.pressed.connect(_on_restart_button_pressed)
 	if next_button != null:
+		next_button.icon = VisualAssets.ICON_NEXT
+		next_button.expand_icon = true
 		next_button.pressed.connect(_on_next_button_pressed)
 	if menu_button != null:
+		menu_button.icon = VisualAssets.ICON_LEVELS
+		menu_button.expand_icon = true
 		menu_button.pressed.connect(_on_menu_button_pressed)
 	if status_label != null:
 		status_label.text = ""
@@ -275,19 +287,10 @@ func create_bridge_for(mover: CharacterBody2D) -> void:
 	collision_shape.one_way_collision = true
 	bridge.add_child(collision_shape)
 
-	var visual := Polygon2D.new()
-	visual.name = "Visual"
-	visual.color = Color(0.55, 0.38, 0.2, 1.0)
-	visual.polygon = PackedVector2Array([
-		Vector2(-BRIDGE_LENGTH / 2.0, -BRIDGE_HEIGHT / 2.0),
-		Vector2(BRIDGE_LENGTH / 2.0, -BRIDGE_HEIGHT / 2.0),
-		Vector2(BRIDGE_LENGTH / 2.0, BRIDGE_HEIGHT / 2.0),
-		Vector2(-BRIDGE_LENGTH / 2.0, BRIDGE_HEIGHT / 2.0)
-	])
-	bridge.add_child(visual)
+	VisualAssets.make_bridge_visual(bridge, rectangle.size)
 
 	add_child(bridge)
-	var bridge_position := mover.global_position + Vector2(direction * (BRIDGE_LENGTH / 2.0 + 12.0), 24.0)
+	var bridge_position := mover.global_position + Vector2(direction * (BRIDGE_LENGTH / 2.0 + BRIDGE_FORWARD_PADDING), BRIDGE_VERTICAL_OFFSET)
 	bridge.global_position = Vector2(roundf(bridge_position.x), roundf(bridge_position.y))
 
 func find_diggable_for(mover: CharacterBody2D) -> Node2D:
@@ -313,7 +316,7 @@ func find_mover_at(world_position: Vector2) -> CharacterBody2D:
 		var mover := child as CharacterBody2D
 		if mover == null:
 			continue
-		if absf(mover.global_position.x - world_position.x) <= 16.0 and absf(mover.global_position.y - world_position.y) <= 16.0:
+		if absf(mover.global_position.x - world_position.x) <= CLICK_HALF_SIZE and absf(mover.global_position.y - world_position.y) <= CLICK_HALF_SIZE:
 			return mover
 
 	return null
@@ -401,33 +404,23 @@ func update_ability_ui() -> void:
 
 	if blocker_button != null:
 		blocker_button.visible = blocker_enabled
-		blocker_button.text = "Blocker: %d" % blocker_uses
-		blocker_button.disabled = game_over or not blocker_enabled or blocker_uses <= 0
-		blocker_button.set_pressed_no_signal(selected_ability == "blocker")
+		VisualAssets.configure_ability_button(blocker_button, VisualAssets.ICON_BLOCKER, blocker_uses, selected_ability == "blocker", game_over or not blocker_enabled or blocker_uses <= 0)
 
 	if builder_button != null:
 		builder_button.visible = builder_enabled
-		builder_button.text = "Builder: %d" % builder_uses
-		builder_button.disabled = game_over or not builder_enabled or builder_uses <= 0
-		builder_button.set_pressed_no_signal(selected_ability == "builder")
+		VisualAssets.configure_ability_button(builder_button, VisualAssets.ICON_BUILDER, builder_uses, selected_ability == "builder", game_over or not builder_enabled or builder_uses <= 0)
 
 	if digger_button != null:
 		digger_button.visible = digger_enabled
-		digger_button.text = "Digger: %d" % digger_uses
-		digger_button.disabled = game_over or not digger_enabled or digger_uses <= 0
-		digger_button.set_pressed_no_signal(selected_ability == "digger")
+		VisualAssets.configure_ability_button(digger_button, VisualAssets.ICON_DIGGER, digger_uses, selected_ability == "digger", game_over or not digger_enabled or digger_uses <= 0)
 
 	if parachuter_button != null:
 		parachuter_button.visible = parachuter_enabled
-		parachuter_button.text = "Parachute: %d" % parachuter_uses
-		parachuter_button.disabled = game_over or not parachuter_enabled or parachuter_uses <= 0
-		parachuter_button.set_pressed_no_signal(selected_ability == "parachuter")
+		VisualAssets.configure_ability_button(parachuter_button, VisualAssets.ICON_PARACHUTE, parachuter_uses, selected_ability == "parachuter", game_over or not parachuter_enabled or parachuter_uses <= 0)
 
 	if climber_button != null:
 		climber_button.visible = climber_enabled
-		climber_button.text = "Climber: %d" % climber_uses
-		climber_button.disabled = game_over or not climber_enabled or climber_uses <= 0
-		climber_button.set_pressed_no_signal(selected_ability == "climber")
+		VisualAssets.configure_ability_button(climber_button, VisualAssets.ICON_CLIMBER, climber_uses, selected_ability == "climber", game_over or not climber_enabled or climber_uses <= 0)
 
 func update_status_ui() -> void:
 	if rescue_label != null:

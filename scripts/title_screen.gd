@@ -6,6 +6,8 @@ extends Control
 @onready var start_button: Button = $CenterPanel/Content/StartButton
 
 func _ready() -> void:
+	start_button.icon = VisualAssets.ICON_LEVELS
+	start_button.expand_icon = true
 	start_button.pressed.connect(_on_start_button_pressed)
 
 func _unhandled_input(event: InputEvent) -> void:

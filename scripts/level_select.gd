@@ -57,6 +57,8 @@ func add_level_button(level: Dictionary) -> void:
 	if Progress.is_completed(scene_path):
 		var best_time := Progress.get_best_time(scene_path)
 		status = "Done  Best %d  %.1fs" % [Progress.get_best_rescued(scene_path), best_time]
+		button.icon = VisualAssets.ICON_COMPLETED
+		button.expand_icon = true
 
 	button.text = "%s  -  %s  [%s]" % [
 		String(level.get("id", "")),

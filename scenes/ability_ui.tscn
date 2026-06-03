@@ -53,57 +53,67 @@ anchor_top = 1.0
 anchor_right = 0.0
 anchor_bottom = 1.0
 offset_left = 24.0
-offset_top = -104.0
-offset_right = 788.0
+offset_top = -140.0
+offset_right = 884.0
 offset_bottom = -24.0
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
 
 [node name="AbilityBar" type="HBoxContainer" parent="AbilityPanel"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="BlockerButton" type="Button" parent="AbilityPanel/AbilityBar"]
 visible = false
-custom_minimum_size = Vector2(136, 64)
+custom_minimum_size = Vector2(136, 96)
 layout_mode = 2
 toggle_mode = true
 text = "Blocker"
-theme_override_font_sizes/font_size = 22
+icon_alignment = 1
+vertical_icon_alignment = 0
+theme_override_font_sizes/font_size = 28
 
 [node name="BuilderButton" type="Button" parent="AbilityPanel/AbilityBar"]
 visible = false
-custom_minimum_size = Vector2(136, 64)
+custom_minimum_size = Vector2(136, 96)
 layout_mode = 2
 toggle_mode = true
 text = "Builder"
-theme_override_font_sizes/font_size = 22
+icon_alignment = 1
+vertical_icon_alignment = 0
+theme_override_font_sizes/font_size = 28
 
 [node name="DiggerButton" type="Button" parent="AbilityPanel/AbilityBar"]
 visible = false
-custom_minimum_size = Vector2(136, 64)
+custom_minimum_size = Vector2(136, 96)
 layout_mode = 2
 toggle_mode = true
 text = "Digger"
-theme_override_font_sizes/font_size = 22
+icon_alignment = 1
+vertical_icon_alignment = 0
+theme_override_font_sizes/font_size = 28
 
 [node name="ParachuterButton" type="Button" parent="AbilityPanel/AbilityBar"]
 visible = false
-custom_minimum_size = Vector2(148, 64)
+custom_minimum_size = Vector2(136, 96)
 layout_mode = 2
 toggle_mode = true
 text = "Parachute"
-theme_override_font_sizes/font_size = 20
+icon_alignment = 1
+vertical_icon_alignment = 0
+theme_override_font_sizes/font_size = 28
 
 [node name="ClimberButton" type="Button" parent="AbilityPanel/AbilityBar"]
 visible = false
-custom_minimum_size = Vector2(136, 64)
+custom_minimum_size = Vector2(136, 96)
 layout_mode = 2
 toggle_mode = true
 text = "Climber"
-theme_override_font_sizes/font_size = 22
+icon_alignment = 1
+vertical_icon_alignment = 0
+theme_override_font_sizes/font_size = 28
 
 [node name="RestartButton" type="Button" parent="."]
 anchor_left = 1.0

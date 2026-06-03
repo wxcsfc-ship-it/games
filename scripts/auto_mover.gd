@@ -3,14 +3,16 @@ extends CharacterBody2D
 signal rescued
 signal died
 
-const SPEED := 120.0
-const GRAVITY := 980.0
-const DELETE_Y := 480.0
-const SAFE_FALL_DISTANCE := 200.0
-const PARACHUTE_FALL_SPEED := 140.0
-const CLIMB_FORWARD_DISTANCE := 72.0
-const CLIMB_UP_DISTANCE := 104.0
-const CLIMB_SPEED := 220.0
+const WORLD_SCALE := 16.0
+const CHARACTER_SIZE := Vector2(32.0, 32.0) * WORLD_SCALE
+const SPEED := 120.0 * WORLD_SCALE
+const GRAVITY := 980.0 * WORLD_SCALE
+const DELETE_Y := 480.0 * WORLD_SCALE
+const SAFE_FALL_DISTANCE := 200.0 * WORLD_SCALE
+const PARACHUTE_FALL_SPEED := 140.0 * WORLD_SCALE
+const CLIMB_FORWARD_DISTANCE := 72.0 * WORLD_SCALE
+const CLIMB_UP_DISTANCE := 104.0 * WORLD_SCALE
+const CLIMB_SPEED := 220.0 * WORLD_SCALE
 
 var direction := 1.0
 var finished := false
@@ -22,12 +24,59 @@ var climb_ready := false
 var is_climbing := false
 var climb_target := Vector2.ZERO
 var blocker_obstacle: StaticBody2D
+var walk_frame_time := 0.0
+var walk_frame_index := 0
+
+@onready var mover_sprite: Sprite2D = get_node_or_null("MoverSprite") as Sprite2D
+@onready var parachute_sprite: Sprite2D = get_node_or_null("ParachuteSprite") as Sprite2D
+
+func _ready() -> void:
+	configure_collision()
+	hide_debug_visuals()
+	configure_sprites()
+
+func configure_collision() -> void:
+	var collision_shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision_shape == null:
+		return
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = CHARACTER_SIZE
+	collision_shape.shape = rectangle
+
+func hide_debug_visuals() -> void:
+	for child in get_children():
+		var polygon := child as Polygon2D
+		if polygon != null:
+			polygon.visible = false
+
+func configure_sprites() -> void:
+	if mover_sprite == null:
+		mover_sprite = Sprite2D.new()
+		mover_sprite.name = "MoverSprite"
+		add_child(mover_sprite)
+	mover_sprite.texture = VisualAssets.MOVER_IDLE
+	mover_sprite.centered = true
+	mover_sprite.z_index = 2
+	mover_sprite.scale = Vector2.ONE
+
+	if parachute_sprite == null:
+		parachute_sprite = Sprite2D.new()
+		parachute_sprite.name = "ParachuteSprite"
+		add_child(parachute_sprite)
+	parachute_sprite.texture = VisualAssets.PARACHUTE_OPEN
+	parachute_sprite.centered = true
+	parachute_sprite.visible = false
+	parachute_sprite.z_index = 1
+	parachute_sprite.scale = Vector2.ONE
+
+	update_visual_state()
 
 func _physics_process(delta: float) -> void:
 	if finished:
 		return
 	if is_blocker:
 		velocity = Vector2.ZERO
+		update_visual_state()
 		return
 
 	if is_climbing:
@@ -35,6 +84,7 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 		if global_position == climb_target:
 			is_climbing = false
+		update_visual_state()
 		return
 
 	if is_on_floor():
@@ -49,6 +99,7 @@ func _physics_process(delta: float) -> void:
 
 	velocity.x = SPEED * direction
 	move_and_slide()
+	advance_walk_frame(delta)
 	if is_on_floor() and was_falling:
 		var fall_distance := global_position.y - fall_start_y
 		was_falling = false
@@ -66,6 +117,34 @@ func _physics_process(delta: float) -> void:
 	if global_position.y > DELETE_Y:
 		die()
 
+	update_visual_state()
+
+func advance_walk_frame(delta: float) -> void:
+	if not is_on_floor() or absf(velocity.x) <= 0.0:
+		return
+	walk_frame_time += delta
+	if walk_frame_time >= 0.18:
+		walk_frame_time = 0.0
+		walk_frame_index = 1 - walk_frame_index
+
+func update_visual_state() -> void:
+	if mover_sprite == null:
+		return
+
+	if is_blocker:
+		mover_sprite.texture = VisualAssets.MOVER_BLOCKER
+	elif climb_ready or is_climbing:
+		mover_sprite.texture = VisualAssets.MOVER_CLIMB_READY
+	elif is_on_floor() and absf(velocity.x) > 0.0:
+		mover_sprite.texture = VisualAssets.MOVER_WALK_01 if walk_frame_index == 0 else VisualAssets.MOVER_WALK_02
+	else:
+		mover_sprite.texture = VisualAssets.MOVER_IDLE
+
+	mover_sprite.scale = Vector2(direction, 1.0)
+	if parachute_sprite != null:
+		parachute_sprite.visible = parachute_open
+		parachute_sprite.scale = Vector2(direction, 1.0)
+
 func become_blocker() -> bool:
 	if finished or is_blocker:
 		return false
@@ -76,10 +155,7 @@ func become_blocker() -> bool:
 	collision_mask = 0
 	create_blocker_obstacle()
 
-	var visual := get_node_or_null("Visual") as Polygon2D
-	if visual != null:
-		visual.color = Color(1.0, 0.85, 0.15, 1.0)
-
+	update_visual_state()
 	return true
 
 func open_parachute() -> bool:
@@ -87,9 +163,7 @@ func open_parachute() -> bool:
 		return false
 
 	parachute_open = true
-	var parachute := get_node_or_null("Parachute") as Polygon2D
-	if parachute != null:
-		parachute.visible = true
+	update_visual_state()
 	return true
 
 func apply_climb() -> bool:
@@ -99,9 +173,7 @@ func apply_climb() -> bool:
 		return false
 
 	climb_ready = true
-	var visual := get_node_or_null("Visual") as Polygon2D
-	if visual != null:
-		visual.color = Color(0.45, 0.85, 1.0, 1.0)
+	update_visual_state()
 	return true
 
 func start_climbing() -> void:
@@ -111,18 +183,14 @@ func start_climbing() -> void:
 	velocity = Vector2.ZERO
 	climb_target = global_position + Vector2(direction * CLIMB_FORWARD_DISTANCE, -CLIMB_UP_DISTANCE)
 
-	var visual := get_node_or_null("Visual") as Polygon2D
-	if visual != null:
-		visual.color = Color(0.2, 0.65, 1.0, 1.0)
+	update_visual_state()
 
 func close_parachute() -> void:
 	if not parachute_open:
 		return
 
 	parachute_open = false
-	var parachute := get_node_or_null("Parachute") as Polygon2D
-	if parachute != null:
-		parachute.visible = false
+	update_visual_state()
 
 func create_blocker_obstacle() -> void:
 	var parent := get_parent()
@@ -136,7 +204,7 @@ func create_blocker_obstacle() -> void:
 
 	var collision_shape := CollisionShape2D.new()
 	var rectangle := RectangleShape2D.new()
-	rectangle.size = Vector2(32, 32)
+	rectangle.size = CHARACTER_SIZE
 	collision_shape.shape = rectangle
 	blocker_obstacle.add_child(collision_shape)
 
