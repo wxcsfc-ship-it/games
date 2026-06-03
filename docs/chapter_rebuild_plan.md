@@ -47,15 +47,14 @@ Purpose: teach Blocker as the first real player-controlled ability.
 
 Tone: one sacrifice is acceptable; timing is readable, not frantic.
 
-Status: prototype implemented as `chapter_02_01.tscn` through `chapter_02_05.tscn`.
+Status: prototype implemented as `chapter_02_01.tscn` through `chapter_02_04.tscn`.
 
 | Level | Working Title | Abilities | Target | Main Idea | Failure Point |
 | --- | --- | --- | --- | --- | --- |
 | C2-1 | Stand Here | Blocker x1 | Rescue 2/3 | First mover blocks before a pit; later movers turn to exit. | No blocker means right-side deaths. |
-| C2-2 | Late Turn | Blocker x1 | Rescue 3/4 | Longer approach and later spawn spacing; block at the last safe platform segment. | Blocking too late loses too many movers. |
-| C2-3 | Lower Shelf | Blocker x1 | Rescue 3/4 | Movers fall to a lower platform, then need a blocker to turn left. | Blocking on the wrong layer traps the route. |
-| C2-4 | Two-Way Lesson | Blocker x2 | Rescue 4/5 | Use one blocker to protect from a pit and another to redirect near exit. | Spending both blockers early prevents finish. |
-| C2-5 | Crowd Control | Blocker x1 | Rescue 4/5 | Chapter summary with wider terrain and one deliberate blocker sacrifice. | The crowd walks into danger without a stable blocker point. |
+| C2-2 | Lower Shelf | Blocker x1 | Rescue 3/4 | Movers fall to a lower platform, then need a blocker to turn left. | Blocking on the wrong layer traps the route. |
+| C2-3 | Two-Way Lesson | Blocker x2 | Rescue 3/5 | Use one blocker to protect from a pit and another to redirect near exit. | Spending both blockers early prevents finish. |
+| C2-4 | Crowd Control | Blocker x1 | Rescue 4/5 | Two-floor layout with five movers and a tight rescue target; no extra deaths allowed. | Late or misplaced blocker on the lower floor sends more than one mover into the pit. |
 
 Implementation notes:
 
@@ -67,6 +66,8 @@ Implementation notes:
 Purpose: introduce route construction: Builder creates temporary floor, Digger removes weak terrain.
 
 Tone: route planning replaces pure timing.
+
+Status: prototype implemented as `chapter_03_01.tscn` through `chapter_03_05.tscn`.
 
 | Level | Working Title | Abilities | Target | Main Idea | Failure Point |
 | --- | --- | --- | --- | --- | --- |
@@ -80,7 +81,7 @@ Implementation notes:
 
 - Weak walls should always use the same brown/orange visual language.
 - Bridge placement should have forgiving platform alignment.
-- This chapter can reference prototype levels 05, 06, 07, 11, and 15, but should use new layouts.
+- C3-5 uses a center spawn with danger on the right and the exit on the far left, requiring Blocker -> Digger -> Builder in sequence.
 
 ## Chapter 4: Vertical Space
 
@@ -88,19 +89,21 @@ Purpose: teach long falls, parachutes, high walls, and routes split by height.
 
 Tone: slower reading, more vertical screen space, fewer movers.
 
+Status: prototype implemented as `chapter_04_01.tscn` through `chapter_04_05.tscn`.
+
 | Level | Working Title | Abilities | Target | Main Idea | Failure Point |
 | --- | --- | --- | --- | --- | --- |
 | C4-1 | Soft Landing | Parachute x1 | Rescue 1/1 | Use parachute before a long fall. | Landing without parachute kills the mover. |
 | C4-2 | High Step | Climber x1 | Rescue 1/1 | Climb a wall to a higher platform. | No climb means wall turn and timeout. |
-| C4-3 | Hold the Landing | Parachute x1, Blocker x1 | Rescue 2/3 | Save one mover below, then prevent the crowd from repeating the deadly drop. | The current prototype has a blocker-only bypass; redesign to make parachute required by route or target. |
+| C4-3 | Hold the Landing | Parachute x1, Blocker x1 | Rescue 2/3 | Save one mover via parachute on the right drop, then block to redirect another through the safe left route. | Blocker alone rescues only 1 (first dies at right drop, only third survives via left); parachute alone also only 1. |
 | C4-4 | Climb to Build | Climber x1, Builder x1 | Rescue 1/1 | Climb to upper route, then bridge an upper gap. | Builder before climb is useless. |
-| C4-5 | Split Heights | Parachute x1, Climber x1 | Rescue 2/2 | One route descends safely, another uses climb to reach exit level. | Assigning the wrong ability to the wrong moment fails. |
+| C4-5 | Split Heights | Parachute x1, Climber x1 | Rescue 2/2 | Two movers split: one climbs to upper exit, one parachutes to lower exit. | Assigning the wrong ability to the wrong mover fails. |
 
 Implementation notes:
 
-- Redesign C4-3 from scratch so Blocker alone cannot satisfy the rescue goal.
-- Keep vertical gaps visibly different from ordinary pits.
-- Use fewer movers to reduce chaos while teaching vertical abilities.
+- C4-3 redesigned with a three-tier structure: upper (spawn), middle (safe left drop), lower (exit). Right drop is deadly (250px), left route uses two safe drops (<200px each). Blocker alone maxes at 1 rescued; both abilities needed for 2.
+- C4-5 uses two separate Exit nodes (upper and lower) feeding the same rescue counter.
+- Vertical drops marked in red for deadly falls, orange/yellow for safe transitions.
 
 ## Chapter 5: Combined Rescue
 
@@ -108,17 +111,17 @@ Purpose: use two to three abilities per level in full puzzle form.
 
 Tone: real game levels, still readable and fair.
 
+Status: prototype implemented as `chapter_05_01.tscn` through `chapter_05_04.tscn`; the previous C5-5 all-abilities capstone was removed because its greybox routes were not stable enough.
+
 | Level | Working Title | Abilities | Target | Main Idea | Failure Point |
 | --- | --- | --- | --- | --- | --- |
 | C5-1 | Store and Release | Blocker x1, Digger x1 | Rescue 2/3 | Store the group with Blocker, dig open the intended route. | Digging without turning the group is too late or useless. |
 | C5-2 | Over and Under | Climber x1, Digger x1 | Rescue 1/1 | Climb to a high route, dig through the obstacle near the exit. | Wrong order returns mover to low route. |
 | C5-3 | Bridge the Drop | Parachute x1, Builder x1 | Rescue 1/1 | Survive a fall, then build out of the landing platform. | Bridge before landing is wasted. |
 | C5-4 | Three-Step Route | Blocker x1, Digger x1, Builder x1 | Rescue 2/3 | Turn group, open weak wall, bridge final gap. | Wrong ability order fails. |
-| C5-5 | Final Prototype Set | Blocker x1, Builder x1, Digger x1, Parachute x1, Climber x1 | Rescue 3/5 | A readable capstone using all five abilities with generous spacing. | Spending any ability on the wrong branch makes rescue target impossible. |
 
 Implementation notes:
 
-- C5-5 should be a capstone, not a precision challenge.
 - Use visual staging: each ability point should be visible before the player reaches it.
 - Avoid simultaneous crises until the game has pause or speed controls.
 
@@ -147,12 +150,11 @@ When implementation begins:
 
 ## Immediate Next Step
 
-Playtest Chapter 2 from the current debug entry:
+Playtest Chapter 5 from the current debug entry:
 
-- `res://levels/chapter_02_01.tscn`
-- `res://levels/chapter_02_02.tscn`
-- `res://levels/chapter_02_03.tscn`
-- `res://levels/chapter_02_04.tscn`
-- `res://levels/chapter_02_05.tscn`
+- `res://levels/chapter_05_01.tscn`
+- `res://levels/chapter_05_02.tscn`
+- `res://levels/chapter_05_03.tscn`
+- `res://levels/chapter_05_04.tscn`
 
-Focus the next pass on tuning Blocker placement windows, especially C2-4. If Chapter 2 is accepted, begin Chapter 3 with Builder and Digger route construction.
+Focus the next pass on blocker timing and dig reach (C5-1), climb landing and dig reach (C5-2), parachute landing and bridge alignment (C5-3), and three-step order readability (C5-4). If Chapter 5 is accepted, move into Phase 10 game-flow work.

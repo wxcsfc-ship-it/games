@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/title_screen.gd" id="1_title_script"]
-[ext_resource type="PackedScene" path="res://levels/level_01.tscn" id="2_first_level"]
+[ext_resource type="PackedScene" path="res://levels/chapter_01_01.tscn" id="2_first_level"]
 
 [node name="TitleScreen" type="Control"]
 layout_mode = 3
@@ -12,6 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_title_script")
 first_level_scene = ExtResource("2_first_level")
+level_select_scene = "res://scenes/level_select.tscn"
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -65,4 +66,4 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(220, 72)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Start"
+text = "Levels"

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "current_entry_scene": "res://levels/chapter_02_01.tscn",
+  "current_entry_scene": "res://levels/chapter_05_01.tscn",
   "first_level_scene": "res://levels/chapter_01_01.tscn",
   "purpose": "Phase 9 chapter rebuild active sequence. Prototype levels 01-15 remain as reference scenes but are no longer the active progression.",
   "chapters": [
@@ -13,6 +13,21 @@
       "id": "chapter_02",
       "title": "Holding the Crowd",
       "purpose": "Teach Blocker as the first player-controlled direction and crowd-control ability."
+    },
+    {
+      "id": "chapter_03",
+      "title": "Building and Digging",
+      "purpose": "Teach route construction: Builder creates temporary floor, Digger removes weak terrain."
+    },
+    {
+      "id": "chapter_04",
+      "title": "Vertical Space",
+      "purpose": "Teach long falls, parachutes, high walls, and routes split by height."
+    },
+    {
+      "id": "chapter_05",
+      "title": "Combined Rescue",
+      "purpose": "Use multiple abilities per level in full puzzle form, ending with a readable all-abilities prototype."
     }
   ],
   "levels": [
@@ -228,49 +243,6 @@
       "chapter_id": "chapter_02",
       "scene": "res://levels/chapter_02_02.tscn",
       "next_scene": "res://levels/chapter_02_03.tscn",
-      "title": "Late Turn",
-      "teaching_goal": "Make the blocker point later and more deliberate while keeping timing readable.",
-      "status": "prototype",
-      "spawn": {
-        "total_to_spawn": 4,
-        "spawn_interval": 2.4
-      },
-      "win_conditions": {
-        "rescue_goal": 3,
-        "time_limit_seconds": 38.0
-      },
-      "abilities": {
-        "blocker_enabled": true,
-        "blocker_uses": 1,
-        "builder_enabled": false,
-        "builder_uses": 0,
-        "digger_enabled": false,
-        "digger_uses": 0,
-        "parachuter_enabled": false,
-        "parachuter_uses": 0,
-        "climber_enabled": false,
-        "climber_uses": 0
-      },
-      "map_logic": [
-        "A longer floor gives more time to read the route.",
-        "The right pit remains the visible failure point.",
-        "The left exit rewards using the blocker as a turn marker."
-      ],
-      "intended_solution": [
-        "Wait until the lead mover approaches the right danger zone.",
-        "Apply Blocker before the pit.",
-        "Rescue the following three movers at the left exit."
-      ],
-      "failure_logic": [
-        "Blocking too early may slow the route and make the lesson weaker.",
-        "Blocking too late sends too many movers into the pit."
-      ]
-    },
-    {
-      "id": "chapter_02_03",
-      "chapter_id": "chapter_02",
-      "scene": "res://levels/chapter_02_03.tscn",
-      "next_scene": "res://levels/chapter_02_04.tscn",
       "title": "Lower Shelf",
       "teaching_goal": "Teach using Blocker after a drop onto a lower platform.",
       "status": "prototype",
@@ -310,10 +282,10 @@
       ]
     },
     {
-      "id": "chapter_02_04",
+      "id": "chapter_02_03",
       "chapter_id": "chapter_02",
-      "scene": "res://levels/chapter_02_04.tscn",
-      "next_scene": "res://levels/chapter_02_05.tscn",
+      "scene": "res://levels/chapter_02_03.tscn",
+      "next_scene": "res://levels/chapter_02_04.tscn",
       "title": "Two-Way Lesson",
       "teaching_goal": "Introduce two available blockers on one floor with danger visible on both sides.",
       "status": "prototype",
@@ -353,11 +325,12 @@
       ]
     },
     {
-      "id": "chapter_02_05",
+      "id": "chapter_02_04",
       "chapter_id": "chapter_02",
-      "scene": "res://levels/chapter_02_05.tscn",
+      "scene": "res://levels/chapter_02_04.tscn",
+      "next_scene": "res://levels/chapter_03_01.tscn",
       "title": "Crowd Control",
-      "teaching_goal": "Summarize Chapter 2 with a wider one-blocker sacrifice puzzle.",
+      "teaching_goal": "Summarize Chapter 2 by combining the two-floor drop with a tight rescue target: five movers, rescue four.",
       "status": "prototype",
       "spawn": {
         "total_to_spawn": 5,
@@ -380,18 +353,517 @@
         "climber_uses": 0
       },
       "map_logic": [
-        "Five movers spawn on a wide floor and face a right-side pit.",
-        "The exit is on the left side.",
-        "The chapter ends by asking for one clean blocker placement and four rescues."
+        "Movers spawn on an upper shelf and fall to a lower shelf.",
+        "The lower exit is left of the landing area; the right side leads to a pit.",
+        "Five movers must be managed with only one blocker and zero extra deaths allowed."
       ],
       "intended_solution": [
-        "Use the first mover as a blocker before the right pit.",
-        "Let the other four movers turn left and enter the exit."
+        "Let movers fall to the lower platform.",
+        "Block the lead mover before the right pit on the lower floor.",
+        "The remaining four movers turn left and enter the exit."
       ],
       "failure_logic": [
-        "No blocker means the crowd walks into danger.",
-        "A late blocker can make the rescue target impossible."
+        "Any mover falling into the right pit beyond the blocker makes rescue target impossible.",
+        "Blocking too late on the lower floor loses more than one mover."
       ]
+    },
+    {
+      "id": "chapter_03_01",
+      "chapter_id": "chapter_03",
+      "scene": "res://levels/chapter_03_01.tscn",
+      "next_scene": "res://levels/chapter_03_02.tscn",
+      "title": "One Bridge",
+      "teaching_goal": "Introduce Builder: click a mover standing on the floor to create a bridge over a gap.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 1.8
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 30.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": true,
+        "builder_uses": 1,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "A single gap separates the spawn floor from the exit floor.",
+        "No walls, no pits besides the gap itself.",
+        "The Builder button is the only ability visible."
+      ],
+      "intended_solution": [
+        "Select Builder (auto-selected).",
+        "Click the lead mover before it reaches the gap.",
+        "The bridge spans the gap and all movers reach the exit."
+      ],
+      "failure_logic": [
+        "No bridge means movers fall into the gap.",
+        "Building too late loses the lead mover."
+      ]
+    },
+    {
+      "id": "chapter_03_02",
+      "chapter_id": "chapter_03",
+      "scene": "res://levels/chapter_03_02.tscn",
+      "next_scene": "res://levels/chapter_03_03.tscn",
+      "title": "Bridge Twice",
+      "teaching_goal": "Use two Builder charges to cross two separated gaps.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 2.5
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 45.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": true,
+        "builder_uses": 2,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "Three floor segments separated by two gaps.",
+        "Both gaps must be bridged.",
+        "The middle floor gives the player time to prepare the second bridge."
+      ],
+      "intended_solution": [
+        "Bridge the first gap before the lead mover falls.",
+        "Bridge the second gap before the lead mover falls.",
+        "All three movers reach the exit on the rightmost floor."
+      ],
+      "failure_logic": [
+        "Missing either bridge sends movers into a gap.",
+        "Spending both bridges on the same gap fails."
+      ]
+    },
+    {
+      "id": "chapter_03_03",
+      "chapter_id": "chapter_03",
+      "scene": "res://levels/chapter_03_03.tscn",
+      "next_scene": "res://levels/chapter_03_04.tscn",
+      "title": "Weak Wall",
+      "teaching_goal": "Introduce Digger: click a mover near a brown weak wall to remove it.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 1.8
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 30.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": true,
+        "digger_uses": 1,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "A single continuous floor leads to the exit.",
+        "A brown diggable wall blocks the path before the exit.",
+        "The Digger button is the only ability visible."
+      ],
+      "intended_solution": [
+        "Select Digger (auto-selected).",
+        "Click the lead mover when it approaches the weak wall.",
+        "The wall disappears and all movers continue to the exit."
+      ],
+      "failure_logic": [
+        "Not digging the wall traps movers — they turn away from the exit.",
+        "Digging from too far away misses the wall and wastes the charge."
+      ]
+    },
+    {
+      "id": "chapter_03_04",
+      "chapter_id": "chapter_03",
+      "scene": "res://levels/chapter_03_04.tscn",
+      "next_scene": "res://levels/chapter_03_05.tscn",
+      "title": "Dig, Then Bridge",
+      "teaching_goal": "Combine Digger and Builder in sequence: open a wall, then bridge the gap behind it.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 2.0
+      },
+      "win_conditions": {
+        "rescue_goal": 3,
+        "time_limit_seconds": 45.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": true,
+        "builder_uses": 1,
+        "digger_enabled": true,
+        "digger_uses": 1,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "A weak wall blocks the path; a gap sits between the wall and the exit floor.",
+        "Both abilities are visible and the player must switch between them.",
+        "The order matters: dig first, then bridge."
+      ],
+      "intended_solution": [
+        "Select Digger, click the lead mover near the weak wall.",
+        "Select Builder, click the lead mover before the gap.",
+        "All three movers reach the exit."
+      ],
+      "failure_logic": [
+        "Bridging before digging wastes the bridge on the wrong side of the wall.",
+        "Digging without bridging leaves the gap impassable."
+      ]
+    },
+    {
+      "id": "chapter_03_05",
+      "chapter_id": "chapter_03",
+      "scene": "res://levels/chapter_03_05.tscn",
+      "next_scene": "res://levels/chapter_04_01.tscn",
+      "title": "Build the Exit Route",
+      "teaching_goal": "Chapter 3 summary: hold the group with Blocker, dig open a wall, and bridge a gap to reach the exit.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 3.0
+      },
+      "win_conditions": {
+        "rescue_goal": 2,
+        "time_limit_seconds": 55.0
+      },
+      "abilities": {
+        "blocker_enabled": true,
+        "blocker_uses": 1,
+        "builder_enabled": true,
+        "builder_uses": 1,
+        "digger_enabled": true,
+        "digger_uses": 1,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "Movers spawn on the left and walk right toward a diggable wall.",
+        "Hitting the wall turns them back left toward a deadly pit.",
+        "The exit is on the far right on a raised platform, past the wall and an 80px gap.",
+        "Three abilities: one Blocker (stop the group before the left pit), one Digger (remove the wall), one Builder (bridge the gap)."
+      ],
+      "intended_solution": [
+        "Select Blocker, click the lead mover after it turns back from the wall.",
+        "The group turns right again. Select Digger, remove the wall.",
+        "Select Builder, bridge the gap to the exit platform.",
+        "Two movers reach the exit; the blocked mover is sacrificed."
+      ],
+      "failure_logic": [
+        "Without Blocker, movers bounce between wall and pit until they fall in.",
+        "Without Digger, movers are trapped bouncing between blocker and wall.",
+        "Without Builder, movers fall into the gap before the exit platform."
+      ]
+    },
+    {
+      "id": "chapter_04_01",
+      "chapter_id": "chapter_04",
+      "scene": "res://levels/chapter_04_01.tscn",
+      "next_scene": "res://levels/chapter_04_02.tscn",
+      "title": "Soft Landing",
+      "teaching_goal": "Introduce Parachute: click a mover before a long fall to survive the drop.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 1,
+        "spawn_interval": 1.0
+      },
+      "win_conditions": {
+        "rescue_goal": 1,
+        "time_limit_seconds": 25.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": true,
+        "parachuter_uses": 1,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "One mover spawns on a high platform and walks right toward a long drop.",
+        "A lower platform below catches the fall and holds the exit.",
+        "The fall distance exceeds the safe limit, killing the mover without a parachute."
+      ],
+      "intended_solution": [
+        "Select Parachute (auto-selected).",
+        "Click the mover before it walks off the upper platform.",
+        "The mover drifts down safely and walks to the exit."
+      ],
+      "failure_logic": [
+        "No parachute means the mover dies on landing.",
+        "Parachuting too late (after falling) still kills the mover."
+      ]
+    },
+    {
+      "id": "chapter_04_02",
+      "chapter_id": "chapter_04",
+      "scene": "res://levels/chapter_04_02.tscn",
+      "next_scene": "res://levels/chapter_04_03.tscn",
+      "title": "High Step",
+      "teaching_goal": "Introduce Climber: click a grounded mover near a tall wall to climb up to a higher platform.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 1,
+        "spawn_interval": 1.0
+      },
+      "win_conditions": {
+        "rescue_goal": 1,
+        "time_limit_seconds": 30.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": true,
+        "climber_uses": 1
+      },
+      "map_logic": [
+        "One mover spawns on a ground-level platform and walks right into a tall wall.",
+        "The wall is too high to walk over; turning around leads nowhere.",
+        "Above the wall, an upper platform holds the exit."
+      ],
+      "intended_solution": [
+        "Select Climber (auto-selected).",
+        "Click the mover while it is on the ground near the wall.",
+        "The mover climbs up, lands on the upper platform, and walks to the exit."
+      ],
+      "failure_logic": [
+        "No climb means the mover turns away from the wall and times out.",
+        "Clicking the mover while it is in the air has no effect."
+      ]
+    },
+    {
+      "id": "chapter_04_03",
+      "chapter_id": "chapter_04",
+      "scene": "res://levels/chapter_04_03.tscn",
+      "next_scene": "res://levels/chapter_04_04.tscn",
+      "title": "Hold the Landing",
+      "teaching_goal": "Combine Parachute and Blocker: save one mover on the dangerous right drop, then block to redirect another mover through the safe left route.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 3,
+        "spawn_interval": 2.5
+      },
+      "win_conditions": {
+        "rescue_goal": 2,
+        "time_limit_seconds": 50.0
+      },
+      "abilities": {
+        "blocker_enabled": true,
+        "blocker_uses": 1,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": true,
+        "parachuter_uses": 1,
+        "climber_enabled": false,
+        "climber_uses": 0
+      },
+      "map_logic": [
+        "Movers spawn near the center of an upper platform.",
+        "Right side: a long deadly drop to a lower platform with the exit.",
+        "Left side: two short safe drops (middle platform, then lower platform) that also reach the exit.",
+        "Blocker alone only rescues 1 (the third mover via the left route; the first dies, the second is sacrificed).",
+        "Parachute alone only rescues 1 (the first mover; the rest die at the right drop).",
+        "Both abilities together rescue 2."
+      ],
+      "intended_solution": [
+        "Select Parachute, click the first mover before the right drop.",
+        "Select Blocker, click the second mover before the right drop.",
+        "The parachuted mover reaches the exit; the third mover turns left, takes the safe drops, and also reaches the exit."
+      ],
+      "failure_logic": [
+        "Blocker alone: first mover dies at right drop, only third mover survives via left route (1 rescued, not enough).",
+        "Parachute alone: only one mover survives the right drop (1 rescued, not enough).",
+        "Parachuting the wrong mover or blocking too late loses the rescue target."
+      ]
+    },
+    {
+      "id": "chapter_04_04",
+      "chapter_id": "chapter_04",
+      "scene": "res://levels/chapter_04_04.tscn",
+      "next_scene": "res://levels/chapter_04_05.tscn",
+      "title": "Climb to Build",
+      "teaching_goal": "Combine Climber and Builder: climb a wall to reach an upper route, then bridge a gap to reach the exit.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 1,
+        "spawn_interval": 1.0
+      },
+      "win_conditions": {
+        "rescue_goal": 1,
+        "time_limit_seconds": 40.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": true,
+        "builder_uses": 1,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": false,
+        "parachuter_uses": 0,
+        "climber_enabled": true,
+        "climber_uses": 1
+      },
+      "map_logic": [
+        "One mover spawns on the ground floor and walks right into a tall wall.",
+        "Above the wall, an upper platform has a gap before the exit segment.",
+        "Both Climber and Builder abilities are available; order matters."
+      ],
+      "intended_solution": [
+        "Select Climber, click the mover near the wall to climb up.",
+        "Select Builder, click the mover before the gap on the upper platform.",
+        "The mover crosses the bridge and reaches the exit."
+      ],
+      "failure_logic": [
+        "Using Builder before climbing wastes the bridge on the ground floor.",
+        "Climbing without bridging leaves the mover stuck at the gap."
+      ]
+    },
+    {
+      "id": "chapter_04_05",
+      "chapter_id": "chapter_04",
+      "scene": "res://levels/chapter_04_05.tscn",
+      "next_scene": "res://levels/chapter_05_01.tscn",
+      "title": "Split Heights",
+      "teaching_goal": "Chapter 4 summary: use Parachute on one mover to survive the left drop, and Climber on the other to reach the upper exit.",
+      "status": "prototype",
+      "spawn": {
+        "total_to_spawn": 2,
+        "spawn_interval": 6.0
+      },
+      "win_conditions": {
+        "rescue_goal": 2,
+        "time_limit_seconds": 45.0
+      },
+      "abilities": {
+        "blocker_enabled": false,
+        "blocker_uses": 0,
+        "builder_enabled": false,
+        "builder_uses": 0,
+        "digger_enabled": false,
+        "digger_uses": 0,
+        "parachuter_enabled": true,
+        "parachuter_uses": 1,
+        "climber_enabled": true,
+        "climber_uses": 1
+      },
+      "map_logic": [
+        "Two movers spawn on a mid-level platform and walk right into a wall.",
+        "Climbing the wall leads to an upper platform with an exit.",
+        "Turning left at the wall leads to a 270px deadly drop; parachuting down is required to survive and reach the lower exit.",
+        "Each mover needs one different ability; both must survive."
+      ],
+      "intended_solution": [
+        "Apply Climber to the first mover at the wall (or let it turn and apply Parachute).",
+        "Apply the remaining ability to the second mover before it reaches the wall or the left drop.",
+        "One mover climbs to the upper exit; the other parachutes to the lower exit."
+      ],
+      "failure_logic": [
+        "Without parachute, any mover taking the left drop dies on impact (270px > 200px safe limit).",
+        "Using both abilities on the same mover leaves the other to die.",
+        "Missing either ability means only one mover survives (need both for rescue 2)."
+      ]
+    },
+    {
+      "id": "chapter_05_01",
+      "chapter_id": "chapter_05",
+      "scene": "res://levels/chapter_05_01.tscn",
+      "next_scene": "res://levels/chapter_05_02.tscn",
+      "title": "Store and Release",
+      "teaching_goal": "Use Blocker to turn the crowd away from danger, then Digger to open the intended exit route.",
+      "status": "prototype",
+      "spawn": {"total_to_spawn": 3, "spawn_interval": 3.0},
+      "win_conditions": {"rescue_goal": 2, "time_limit_seconds": 50.0},
+      "abilities": {"blocker_enabled": true, "blocker_uses": 1, "builder_enabled": false, "builder_uses": 0, "digger_enabled": true, "digger_uses": 1, "parachuter_enabled": false, "parachuter_uses": 0, "climber_enabled": false, "climber_uses": 0},
+      "map_logic": ["Movers walk right toward a visible pit.", "The exit is left of a weak wall.", "Blocker turns later movers left; Digger opens the weak wall."],
+      "intended_solution": ["Use Blocker before the right pit.", "Use Digger near the weak wall.", "Two movers reach the left exit."],
+      "failure_logic": ["Without Blocker, movers walk into the pit.", "Without Digger, the left route remains closed."]
+    },
+    {
+      "id": "chapter_05_02",
+      "chapter_id": "chapter_05",
+      "scene": "res://levels/chapter_05_02.tscn",
+      "next_scene": "res://levels/chapter_05_03.tscn",
+      "title": "Over and Under",
+      "teaching_goal": "Climb to a high route, then dig through the weak wall before the exit.",
+      "status": "prototype",
+      "spawn": {"total_to_spawn": 1, "spawn_interval": 1.0},
+      "win_conditions": {"rescue_goal": 1, "time_limit_seconds": 45.0},
+      "abilities": {"blocker_enabled": false, "blocker_uses": 0, "builder_enabled": false, "builder_uses": 0, "digger_enabled": true, "digger_uses": 1, "parachuter_enabled": false, "parachuter_uses": 0, "climber_enabled": true, "climber_uses": 1},
+      "map_logic": ["A tall wall leads to an upper platform.", "A weak wall blocks the upper route."],
+      "intended_solution": ["Use Climber at the tall wall.", "Use Digger on the upper weak wall."],
+      "failure_logic": ["No Climber leaves the mover on the lower route.", "No Digger leaves the upper route blocked."]
+    },
+    {
+      "id": "chapter_05_03",
+      "chapter_id": "chapter_05",
+      "scene": "res://levels/chapter_05_03.tscn",
+      "next_scene": "res://levels/chapter_05_04.tscn",
+      "title": "Bridge the Drop",
+      "teaching_goal": "Survive a long fall with Parachute, then build from the landing platform to the exit platform.",
+      "status": "prototype",
+      "spawn": {"total_to_spawn": 1, "spawn_interval": 1.0},
+      "win_conditions": {"rescue_goal": 1, "time_limit_seconds": 45.0},
+      "abilities": {"blocker_enabled": false, "blocker_uses": 0, "builder_enabled": true, "builder_uses": 1, "digger_enabled": false, "digger_uses": 0, "parachuter_enabled": true, "parachuter_uses": 1, "climber_enabled": false, "climber_uses": 0},
+      "map_logic": ["The mover falls from a high platform to a lower platform.", "A lower gap requires Builder after landing."],
+      "intended_solution": ["Use Parachute before the fall.", "Use Builder after landing to cross the lower gap."],
+      "failure_logic": ["No Parachute kills the mover.", "No Builder leaves the lower gap impassable."]
+    },
+    {
+      "id": "chapter_05_04",
+      "chapter_id": "chapter_05",
+      "scene": "res://levels/chapter_05_04.tscn",
+      "title": "Three-Step Route",
+      "teaching_goal": "Turn the group, dig open a weak wall, then bridge the final gap.",
+      "status": "prototype",
+      "spawn": {"total_to_spawn": 3, "spawn_interval": 3.0},
+      "win_conditions": {"rescue_goal": 2, "time_limit_seconds": 60.0},
+      "abilities": {"blocker_enabled": true, "blocker_uses": 1, "builder_enabled": true, "builder_uses": 1, "digger_enabled": true, "digger_uses": 1, "parachuter_enabled": false, "parachuter_uses": 0, "climber_enabled": false, "climber_uses": 0},
+      "map_logic": ["A weak wall and final gap block the exit route.", "Blocker protects the group from the opposite pit."],
+      "intended_solution": ["Use Blocker to hold the group.", "Use Digger on the weak wall.", "Use Builder on the final gap."],
+      "failure_logic": ["Wrong order wastes limited abilities.", "Missing any required ability leaves the route incomplete."]
     }
   ]
 }

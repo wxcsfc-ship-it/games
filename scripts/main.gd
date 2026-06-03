@@ -16,6 +16,7 @@ extends Node2D
 @export var rescue_goal := 3
 @export var time_limit_seconds := 30.0
 @export var next_level_scene: PackedScene
+@export_file("*.tscn") var level_select_scene := "res://scenes/level_select.tscn"
 
 const BRIDGE_LENGTH := 160.0
 const BRIDGE_HEIGHT := 16.0
@@ -39,8 +40,10 @@ var elapsed_time := 0.0
 @onready var climber_button: Button = get_node_or_null("AbilityUI/AbilityPanel/AbilityBar/ClimberButton") as Button
 @onready var rescue_label: Label = get_node_or_null("AbilityUI/RescueLabel") as Label
 @onready var status_label: Label = get_node_or_null("AbilityUI/StatusLabel") as Label
+@onready var result_detail_label: Label = get_node_or_null("AbilityUI/ResultDetailLabel") as Label
 @onready var restart_button: Button = get_node_or_null("AbilityUI/RestartButton") as Button
 @onready var next_button: Button = get_node_or_null("AbilityUI/NextButton") as Button
+@onready var menu_button: Button = get_node_or_null("AbilityUI/MenuButton") as Button
 @onready var audio_manager: Node = get_node_or_null("AbilityUI/AudioManager")
 
 func _ready() -> void:
@@ -73,8 +76,13 @@ func _ready() -> void:
 		restart_button.pressed.connect(_on_restart_button_pressed)
 	if next_button != null:
 		next_button.pressed.connect(_on_next_button_pressed)
+	if menu_button != null:
+		menu_button.pressed.connect(_on_menu_button_pressed)
 	if status_label != null:
 		status_label.text = ""
+	if result_detail_label != null:
+		result_detail_label.visible = false
+		result_detail_label.text = ""
 	update_status_ui()
 
 	spawn_next_mover()
@@ -91,7 +99,7 @@ func _process(delta: float) -> void:
 	elapsed_time += delta
 	update_status_ui()
 	if elapsed_time >= time_limit_seconds:
-		finish_game("Failure")
+		finish_game("Time Up")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if game_over:
@@ -463,7 +471,7 @@ func check_game_state() -> void:
 
 	var remaining_possible := (total_to_spawn - generated_count) + count_rescueable_active_movers()
 	if rescued_count + remaining_possible < rescue_goal:
-		finish_game("Failure")
+		finish_game("Not Enough Saved")
 
 func count_rescueable_active_movers() -> int:
 	var count := 0
@@ -482,16 +490,32 @@ func count_rescueable_active_movers() -> int:
 func finish_game(message: String) -> void:
 	game_over = true
 	spawn_timer.stop()
+	if message == "Victory":
+		Progress.mark_level_complete(scene_file_path, rescued_count, elapsed_time)
 	if status_label != null:
 		status_label.text = message
+	if result_detail_label != null:
+		result_detail_label.text = get_result_detail(message)
+		result_detail_label.visible = result_detail_label.text != ""
 	if audio_manager != null:
 		if message == "Victory":
 			audio_manager.play_victory()
 		else:
 			audio_manager.play_failure()
 	if next_button != null:
-		next_button.visible = message == "Victory" and next_level_scene != null
+		next_button.visible = message == "Victory"
+		if message == "Victory":
+			next_button.text = "Next" if next_level_scene != null else "Levels"
 	update_ability_ui()
+
+func get_result_detail(message: String) -> String:
+	if message == "Victory":
+		return "Saved %d/%d in %.1fs" % [rescued_count, total_to_spawn, elapsed_time]
+	if message == "Time Up":
+		return "Time ran out. Saved %d/%d; goal is %d." % [rescued_count, total_to_spawn, rescue_goal]
+	if message == "Not Enough Saved":
+		return "Too many walkers were lost or blocked. Saved %d/%d; goal is %d." % [rescued_count, total_to_spawn, rescue_goal]
+	return ""
 
 func _on_restart_button_pressed() -> void:
 	get_tree().reload_current_scene()
@@ -499,3 +523,9 @@ func _on_restart_button_pressed() -> void:
 func _on_next_button_pressed() -> void:
 	if next_level_scene != null:
 		get_tree().change_scene_to_packed(next_level_scene)
+	elif level_select_scene != "":
+		get_tree().change_scene_to_file(level_select_scene)
+
+func _on_menu_button_pressed() -> void:
+	if level_select_scene != "":
+		get_tree().change_scene_to_file(level_select_scene)

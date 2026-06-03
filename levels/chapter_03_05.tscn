@@ -1,0 +1,103 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/auto_mover.tscn" id="2_auto_mover"]
+[ext_resource type="Script" path="res://scripts/exit.gd" id="3_exit"]
+[ext_resource type="PackedScene" path="res://scenes/ability_ui.tscn" id="4_ability_ui"]
+[ext_resource type="PackedScene" path="res://levels/chapter_04_01.tscn" id="5_next_level"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_main_floor"]
+size = Vector2(700, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(32, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit_floor"]
+size = Vector2(160, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit"]
+size = Vector2(48, 64)
+
+[node name="Chapter0305" type="Node2D"]
+script = ExtResource("1_main")
+auto_mover_scene = ExtResource("2_auto_mover")
+total_to_spawn = 3
+spawn_interval = 3.0
+blocker_enabled = true
+blocker_uses = 1
+builder_enabled = true
+builder_uses = 1
+digger_enabled = true
+digger_uses = 1
+parachuter_enabled = false
+parachuter_uses = 0
+climber_enabled = false
+climber_uses = 0
+rescue_goal = 2
+time_limit_seconds = 55.0
+next_level_scene = ExtResource("5_next_level")
+
+[node name="AbilityUI" parent="." instance=ExtResource("4_ability_ui")]
+
+[node name="SpawnTimer" type="Timer" parent="."]
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(120, 160)
+
+[node name="Visual" type="Polygon2D" parent="SpawnPoint"]
+color = Color(1, 0.55, 0.15, 1)
+polygon = PackedVector2Array(0, -12, 12, 10, -12, 10)
+
+[node name="MainFloor" type="StaticBody2D" parent="."]
+position = Vector2(350, 320)
+
+[node name="Visual" type="Polygon2D" parent="MainFloor"]
+color = Color(0.35, 0.45, 0.38, 1)
+polygon = PackedVector2Array(-350, -16, 350, -16, 350, 16, -350, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainFloor"]
+shape = SubResource("RectangleShape2D_main_floor")
+
+[node name="LeftPitMarker" type="Polygon2D" parent="."]
+color = Color(0.75, 0.12, 0.12, 1)
+polygon = PackedVector2Array(0, 312, -80, 312, -80, 500, 0, 500)
+
+[node name="DiggableWall" type="StaticBody2D" parent="." groups=["diggable"]]
+position = Vector2(550, 272)
+
+[node name="Visual" type="Polygon2D" parent="DiggableWall"]
+color = Color(0.72, 0.38, 0.18, 1)
+polygon = PackedVector2Array(-16, -32, 16, -32, 16, 32, -16, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DiggableWall"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="ExitFloor" type="StaticBody2D" parent="."]
+position = Vector2(860, 360)
+
+[node name="Visual" type="Polygon2D" parent="ExitFloor"]
+color = Color(0.35, 0.45, 0.38, 1)
+polygon = PackedVector2Array(-80, -16, 80, -16, 80, 16, -80, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitFloor"]
+shape = SubResource("RectangleShape2D_exit_floor")
+
+[node name="GapMarker" type="Polygon2D" parent="."]
+color = Color(0.75, 0.12, 0.12, 1)
+polygon = PackedVector2Array(700, 312, 780, 312, 780, 370, 700, 370)
+
+[node name="Exit" type="Area2D" parent="."]
+position = Vector2(860, 312)
+collision_mask = 2
+script = ExtResource("3_exit")
+
+[node name="Frame" type="Polygon2D" parent="Exit"]
+color = Color(0.05, 0.35, 0.18, 1)
+polygon = PackedVector2Array(-24, -32, 24, -32, 24, 32, -24, 32)
+
+[node name="Visual" type="Polygon2D" parent="Exit"]
+color = Color(0.25, 1, 0.5, 1)
+polygon = PackedVector2Array(-19, -27, 19, -27, 19, 27, -19, 27)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exit"]
+shape = SubResource("RectangleShape2D_exit")

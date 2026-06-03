@@ -56,7 +56,7 @@ project.godot
 当前运行入口是：
 
 ```text
-res://levels/chapter_02_01.tscn
+res://scenes/title_screen.tscn
 ```
 
 角色脚本是：
@@ -105,6 +105,20 @@ docs/level_catalog.md
 - 第 4 关包含上下两层平台，角色会从上层落到下层
 - 第 5 关通过 `builder_enabled = true` 开启搭桥者能力，且 `builder_uses = 1`
 - 第 6 关通过 `builder_enabled = true` 开启搭桥者能力，且 `builder_uses = 2`
+- C3-1 通过 `builder_enabled = true` 开启搭桥者能力，且 `builder_uses = 1`
+- C3-2 通过 `builder_enabled = true` 开启搭桥者能力，且 `builder_uses = 2`
+- C3-3 通过 `digger_enabled = true` 开启挖掘者能力，且 `digger_uses = 1`，弱墙使用 `diggable` 分组
+- C3-4 同时开启 Builder 和 Digger 各 1 次
+- C3-5 同时开启 Blocker、Builder、Digger 各 1 次，中心出生，右侧陷阱 + 左侧出口被弱墙和缺口阻挡
+- C4-1 通过 `parachuter_enabled = true` 开启降落者能力，且 `parachuter_uses = 1`，高层平台 → 长距下落 → 出口
+- C4-2 通过 `climber_enabled = true` 开启攀爬者能力，且 `climber_uses = 1`，高墙阻挡 → 攀爬 → 上层出口
+- C4-3 同时开启 Parachute 和 Blocker 各 1 次，三层结构（上层出生、中层安全左落、底层出口），右落致命左落安全
+- C4-4 同时开启 Climber 和 Builder 各 1 次，先爬墙后搭桥
+- C4-5 同时开启 Parachute 和 Climber 各 1 次，双出口（上层和下层），两个角色各用一种能力
+- C5-1 同时开启 Blocker 和 Digger 各 1 次，先阻挡转向，再挖开弱墙通向出口
+- C5-2 同时开启 Climber 和 Digger 各 1 次，先爬上高台，再挖开上层弱墙
+- C5-3 同时开启 Parachute 和 Builder 各 1 次，先安全落到下层平台，再搭桥到出口平台
+- C5-4 同时开启 Blocker、Digger、Builder 各 1 次，按阻挡、挖墙、搭桥顺序完成路线
 - 进入 `Exit` 后调用 `rescue()`，计入 `rescued_count`
 - 掉出地图后调用 `die()`，计入 `dead_count`，并 `queue_free()` 删除
 - 通过 `rescue_goal` 设置救援目标
@@ -134,14 +148,13 @@ godot --path . --debug-collisions
 
 如果还想同时检查碰撞范围，可以打开碰撞形状显示。
 
-运行当前项目后，应直接进入 `chapter_02_01.tscn`，用于调试最新 Chapter 2 内容。C2-1 到 C2-5 都只开启 Blocker：先选择左下角 Blocker 按钮，再点击合适的角色让它停下并变黄，后续角色碰到阻挡者后转向。每关胜利后点击 `Next` 进入下一关；C2-5 胜利后没有下一关按钮。
+运行当前项目后，应进入 `title_screen.tscn`。点击 `Levels` 或按 Enter 进入 `level_select.tscn`，从关卡选择进入任意章节关卡。关卡选择显示每章完成数，以及已通关关卡的最高救援数和最快时间。关卡胜利会记录到 `user://progress.cfg`；普通关卡胜利后 `Next` 进入下一关，章节末尾胜利后 `Next` 返回关卡选择。关卡内右上角 `Levels` 按钮可随时返回关卡选择。胜利/失败后屏幕中部会显示结果细节。
 
-Chapter 2 试玩重点：
+Chapter 5 试玩重点：
 
-- C2-1：在第一个角色走向右侧红色坑前放置 Blocker，救 2/3。
-- C2-2：等待角色更接近右侧坑再放置 Blocker，救 3/4。
-- C2-3：等角色落到下层平台后再放置 Blocker，救 3/4。
-- C2-4：当前为两次 Blocker 的宽平台练习，救 3/5，重点检查是否真的需要或值得使用第二个 Blocker。
-- C2-5：用 1 个 Blocker 牺牲首个角色，救后续 4/5。
+- C5-1：三角色向右走向坑，使用 Blocker 转向，再用 Digger 打开左侧弱墙，救 2/3。
+- C5-2：单角色先 Climber 爬到上层，再 Digger 挖开弱墙到达出口，救 1/1。
+- C5-3：单角色先 Parachute 安全落下，再 Builder 跨过下层缺口到达出口，救 1/1。
+- C5-4：三角色按 Blocker、Digger、Builder 顺序完成路线，救 2/3。
 
-如果需要完整测试重建流程，可以临时把 `project.godot` 的 `run/main_scene` 改回 `res://levels/chapter_01_01.tscn`，从 Chapter 1 开始一路点击 `Next` 到 Chapter 2。
+如果需要完整测试重建流程，可以临时把 `project.godot` 的 `run/main_scene` 改回 `res://levels/chapter_01_01.tscn`，从 Chapter 1 开始一路点击 `Next` 到 Chapter 4。
