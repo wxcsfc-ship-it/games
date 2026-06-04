@@ -10,6 +10,7 @@ const BACKDROP_LAYER := -100
 const REGION_ALIGN_CENTER := 0
 const REGION_ALIGN_TOP := -1
 const REGION_ALIGN_BOTTOM := 1
+const TILE_OVERLAP_PIXELS := 16.0
 
 var MOVER_IDLE: Texture2D
 var MOVER_WALK_01: Texture2D
@@ -22,9 +23,6 @@ var FLOOR_TOP: Texture2D
 var WALL_SOLID: Texture2D
 var WALL_DIGGABLE: Texture2D
 var BRIDGE_PLANK: Texture2D
-var HAZARD_PIT: Texture2D
-var DROP_DEADLY: Texture2D
-var DROP_SAFE: Texture2D
 
 var SPAWN_GATE: Texture2D
 var EXIT_FRAME: Texture2D
@@ -56,9 +54,6 @@ func load_textures() -> void:
 	WALL_SOLID = load_png_texture("res://assets/processed/tiles/wall_solid.png")
 	WALL_DIGGABLE = load_png_texture("res://assets/processed/tiles/wall_diggable.png")
 	BRIDGE_PLANK = load_png_texture("res://assets/processed/tiles/bridge_plank.png")
-	HAZARD_PIT = load_png_texture("res://assets/processed/tiles/hazard_pit.png")
-	DROP_DEADLY = load_png_texture("res://assets/processed/tiles/drop_deadly_marker.png")
-	DROP_SAFE = load_png_texture("res://assets/processed/tiles/drop_safe_marker.png")
 
 	SPAWN_GATE = load_png_texture("res://assets/processed/props/spawn_gate.png")
 	EXIT_FRAME = load_png_texture("res://assets/processed/props/exit_frame.png")
@@ -87,7 +82,9 @@ func load_png_texture(path: String) -> Texture2D:
 		var bounds := _opaque_bounds(image)
 		if bounds.size.x > 0 and bounds.size.y > 0 and bounds.size != Vector2i(image.get_width(), image.get_height()):
 			image = image.get_region(bounds)
-	return ImageTexture.create_from_image(image)
+	var texture := ImageTexture.create_from_image(image)
+	texture.set_meta("source_path", path)
+	return texture
 
 func scaled(value: float) -> float:
 	return value * WORLD_SCALE
@@ -235,17 +232,12 @@ func install_body_visual(body: StaticBody2D) -> void:
 		add_repeated_texture(body, FLOOR_TOP, size, "FloorTexture", -2, Vector2.ZERO, REGION_ALIGN_TOP)
 
 func install_marker_visual(marker: Polygon2D) -> void:
-	if marker.polygon.is_empty():
-		return
-
-	var bounds := _polygon_bounds(marker.polygon)
+	for child in marker.get_children():
+		var child_node := child as Node
+		if child_node.name.begins_with("MarkerTexture"):
+			child_node.queue_free()
 	marker.color = Color(marker.color.r, marker.color.g, marker.color.b, 0.0)
-	var texture: Texture2D = HAZARD_PIT
-	var lower_name := marker.name.to_lower()
-	if lower_name.contains("drop"):
-		texture = DROP_SAFE if lower_name.contains("safe") or lower_name.contains("mid") or lower_name.contains("left") else DROP_DEADLY
-
-	add_repeated_texture(marker, texture, bounds.size, "MarkerTexture", -3, bounds.get_center())
+	marker.visible = false
 
 func install_spawn_visual(spawn: Marker2D) -> void:
 	hide_polygon_children(spawn)
@@ -287,20 +279,32 @@ func add_repeated_texture(parent: Node2D, texture: Texture2D, target_size: Vecto
 	var columns: int = max(1, int(ceil(target_size.x / tile_size.x)))
 	var rows: int = max(1, int(ceil(target_size.y / tile_size.y)))
 	var origin := local_center - target_size * 0.5
+	var is_floor_texture := str(texture.get_meta("source_path", "")).contains("floor_top")
 
 	for y in range(rows):
 		for x in range(columns):
 			var remaining := target_size - Vector2(float(x) * tile_size.x, float(y) * tile_size.y)
 			var cell_size := Vector2(minf(tile_size.x, remaining.x), minf(tile_size.y, remaining.y))
+			var draw_size := cell_size
+			if is_floor_texture:
+				draw_size += Vector2(TILE_OVERLAP_PIXELS, TILE_OVERLAP_PIXELS)
 			var sprite := Sprite2D.new()
 			sprite.name = "%s_%d_%d" % [prefix, x, y]
 			sprite.texture = texture
 			sprite.centered = true
 			sprite.region_enabled = true
-			sprite.region_rect = _texture_region(texture, cell_size, vertical_align)
+			var region_rect := _texture_region(texture, draw_size, vertical_align)
+			sprite.region_rect = region_rect
 			sprite.position = origin + Vector2(float(x) * tile_size.x, float(y) * tile_size.y) + cell_size * 0.5
 			sprite.z_index = z
-			sprite.scale = Vector2.ONE
+			if is_floor_texture:
+				sprite.scale = Vector2(
+					draw_size.x / maxf(1.0, region_rect.size.x),
+					draw_size.y / maxf(1.0, region_rect.size.y)
+				)
+			else:
+				sprite.scale = Vector2.ONE
+			sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 			parent.add_child(sprite)
 
 func add_solid_rect(parent: Node2D, target_size: Vector2, node_name: String, color: Color, z: int, local_center := Vector2.ZERO) -> Polygon2D:
@@ -348,12 +352,15 @@ func configure_ability_button(button: Button, texture: Texture2D, count: int, se
 
 func _texture_region(texture: Texture2D, size: Vector2, vertical_align := REGION_ALIGN_CENTER) -> Rect2:
 	var texture_size := Vector2(texture.get_width(), texture.get_height())
-	var region_size := Vector2(minf(texture_size.x, size.x), minf(texture_size.y, size.y))
-	var offset := (texture_size - region_size) * 0.5
+	var region_size := Vector2(
+		floorf(minf(texture_size.x, size.x)),
+		floorf(minf(texture_size.y, size.y))
+	)
+	var offset := ((texture_size - region_size) * 0.5).floor()
 	if vertical_align == REGION_ALIGN_TOP:
 		offset.y = 0.0
 	elif vertical_align == REGION_ALIGN_BOTTOM:
-		offset.y = texture_size.y - region_size.y
+		offset.y = floorf(texture_size.y - region_size.y)
 	return Rect2(offset, region_size)
 
 func _opaque_bounds(image: Image) -> Rect2i:

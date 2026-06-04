@@ -13,6 +13,8 @@ const PARACHUTE_FALL_SPEED := 140.0 * WORLD_SCALE
 const CLIMB_FORWARD_DISTANCE := 72.0 * WORLD_SCALE
 const CLIMB_UP_DISTANCE := 104.0 * WORLD_SCALE
 const CLIMB_SPEED := 220.0 * WORLD_SCALE
+const MOVER_VISUAL_HEIGHT := 42.0 * WORLD_SCALE
+const PARACHUTE_VISUAL_HEIGHT := 76.0 * WORLD_SCALE
 
 var direction := 1.0
 var finished := false
@@ -28,7 +30,6 @@ var walk_frame_time := 0.0
 var walk_frame_index := 0
 
 @onready var mover_sprite: Sprite2D = get_node_or_null("MoverSprite") as Sprite2D
-@onready var parachute_sprite: Sprite2D = get_node_or_null("ParachuteSprite") as Sprite2D
 
 func _ready() -> void:
 	configure_collision()
@@ -57,17 +58,12 @@ func configure_sprites() -> void:
 	mover_sprite.texture = VisualAssets.MOVER_IDLE
 	mover_sprite.centered = true
 	mover_sprite.z_index = 2
-	mover_sprite.scale = Vector2.ONE
+	mover_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	mover_sprite.scale = _texture_scale_for_height(mover_sprite.texture, MOVER_VISUAL_HEIGHT)
 
-	if parachute_sprite == null:
-		parachute_sprite = Sprite2D.new()
-		parachute_sprite.name = "ParachuteSprite"
-		add_child(parachute_sprite)
-	parachute_sprite.texture = VisualAssets.PARACHUTE_OPEN
-	parachute_sprite.centered = true
-	parachute_sprite.visible = false
-	parachute_sprite.z_index = 1
-	parachute_sprite.scale = Vector2.ONE
+	var old_parachute_sprite := get_node_or_null("ParachuteSprite") as Sprite2D
+	if old_parachute_sprite != null:
+		old_parachute_sprite.queue_free()
 
 	update_visual_state()
 
@@ -133,6 +129,8 @@ func update_visual_state() -> void:
 
 	if is_blocker:
 		mover_sprite.texture = VisualAssets.MOVER_BLOCKER
+	elif parachute_open:
+		mover_sprite.texture = VisualAssets.PARACHUTE_OPEN
 	elif climb_ready or is_climbing:
 		mover_sprite.texture = VisualAssets.MOVER_CLIMB_READY
 	elif is_on_floor() and absf(velocity.x) > 0.0:
@@ -140,10 +138,15 @@ func update_visual_state() -> void:
 	else:
 		mover_sprite.texture = VisualAssets.MOVER_IDLE
 
-	mover_sprite.scale = Vector2(direction, 1.0)
-	if parachute_sprite != null:
-		parachute_sprite.visible = parachute_open
-		parachute_sprite.scale = Vector2(direction, 1.0)
+	var target_height := PARACHUTE_VISUAL_HEIGHT if parachute_open else MOVER_VISUAL_HEIGHT
+	var mover_scale := _texture_scale_for_height(mover_sprite.texture, target_height)
+	mover_sprite.scale = Vector2(absf(mover_scale.x) * direction, mover_scale.y)
+
+func _texture_scale_for_height(texture: Texture2D, target_height: float) -> Vector2:
+	if texture == null or texture.get_height() <= 0:
+		return Vector2.ONE
+	var scale_value := target_height / float(texture.get_height())
+	return Vector2(scale_value, scale_value)
 
 func become_blocker() -> bool:
 	if finished or is_blocker:
