@@ -1,160 +1,180 @@
-# Chapter Rebuild Plan
+# 用户旅程与章节规划
 
-This document starts phase 9: rebuilding the level structure into chapters that feel like a real game. Existing code and prototype levels can be referenced for mechanics, timing, and scene patterns, but the chapter levels below should be redesigned as new content rather than copied directly from levels 01-15.
+本文档记录项目如何从散装机制测试关，重构成 5 章用户学习路径。目标是让关卡不只是功能测试，而是承担循序渐进的教学、反馈和验证作用。
 
-## Goals
+当前状态：章节重建已完成，真实流程已接入，项目进入表现和可读性打磨阶段。
 
-- Replace the loose prototype sequence with chapters that teach, vary, and summarize mechanics.
-- Keep the Lemmings-style focus on route reading, limited resources, acceptable sacrifice, and visible failure.
-- Build each chapter around 4-5 levels: introduction, standard use, variation, and chapter summary.
-- Keep debug startup pointed at the newest implemented chapter level during development.
-- Preserve the current prototype levels as reference material until the chapter set is playable.
+## 1. 重构目标
 
-## Rebuild Rules
+原始问题：
 
-- New chapter levels should use new scene names, for example `chapter_01_01.tscn`, not overwrite old prototype levels.
-- Each level must have a one-sentence design goal before implementation.
-- Each chapter should introduce only one major new idea.
-- Each level must list ability counts, rescue target, main solution, and intended failure modes.
-- Do not depend on pixel-perfect clicks; if timing is too strict, adjust terrain spacing first.
-- Use the existing `main.gd`, `auto_mover.gd`, `ability_ui.tscn`, and `exit.gd` as the starting technical base unless a chapter requirement clearly exposes a missing system.
-- When a chapter level is implemented, add it to `data/levels.json` and `docs/level_catalog.md`.
+- 早期 `level_01` 到 `level_15` 更像功能测试，能验证机制，但用户学习路径不够清晰。
+- 新能力出现顺序、组合关系和失败反馈需要被组织成可讲述的产品旅程。
+- 关卡需要记录“用户从陌生到掌握”的过程，而不只是记录场景文件。
 
-## Chapter 1: First Rescue
+重构目标：
 
-Purpose: teach automatic movement, exits, pits, and the idea that not every visible danger requires an ability.
+- 将 15 个历史原型沉淀为 5 章 22 个活跃关卡。
+- 每章只承担一个主要学习目标。
+- 每关必须记录教学目标、能力次数、救援目标、主解法和失败逻辑。
+- 难度来自路线阅读、资源分配和能力顺序，不来自隐藏陷阱或像素级操作。
+- 关卡意图同步进入 `data/levels.json`，支持关卡选择、进度记录和后续数据分析。
 
-Tone: low pressure, wide spaces, no ability switching.
+## 2. 用户旅程框架
 
-Status: prototype implemented as `chapter_01_01.tscn` through `chapter_01_04.tscn`.
-
-| Level | Working Title | Abilities | Target | Main Idea | Failure Point |
-| --- | --- | --- | --- | --- | --- |
-| C1-1 | Walk Home | None | Rescue 3/3 | Movers walk right into the exit. | Only time expiry should fail. |
-| C1-2 | Mind the Edge | None | Rescue 3/3 | Exit appears before a visible pit, teaching danger preview. | Missing the exit route in layout would send movers into the pit. |
-| C1-3 | The Long Floor | None | Rescue 4/4 | Longer spawn spacing and time pressure, still no abilities. | Time limit if route is too slow. |
-| C1-4 | First Turn | None | Rescue 3/3 | A wall turns movers back toward an exit, teaching automatic wall-turn behavior. | Bad wall placement can trap the group. |
-
-Implementation notes:
-
-- This chapter should feel almost like a tutorial without popups.
-- Do not introduce ability buttons yet.
-- Use clear green exits and red pit markers.
-
-## Chapter 2: Holding the Crowd
-
-Purpose: teach Blocker as the first real player-controlled ability.
-
-Tone: one sacrifice is acceptable; timing is readable, not frantic.
-
-Status: prototype implemented as `chapter_02_01.tscn` through `chapter_02_04.tscn`.
-
-| Level | Working Title | Abilities | Target | Main Idea | Failure Point |
-| --- | --- | --- | --- | --- | --- |
-| C2-1 | Stand Here | Blocker x1 | Rescue 2/3 | First mover blocks before a pit; later movers turn to exit. | No blocker means right-side deaths. |
-| C2-2 | Lower Shelf | Blocker x1 | Rescue 3/4 | Movers fall to a lower platform, then need a blocker to turn left. | Blocking on the wrong layer traps the route. |
-| C2-3 | Two-Way Lesson | Blocker x2 | Rescue 3/5 | Use one blocker to protect from a pit and another to redirect near exit. | Spending both blockers early prevents finish. |
-| C2-4 | Crowd Control | Blocker x1 | Rescue 4/5 | Two-floor layout with five movers and a tight rescue target; no extra deaths allowed. | Late or misplaced blocker on the lower floor sends more than one mover into the pit. |
-
-Implementation notes:
-
-- The blocker body should be visually obvious.
-- Keep exits on both left and right across the chapter so players learn direction is a route property, not a fixed goal.
-
-## Chapter 3: Building and Digging
-
-Purpose: introduce route construction: Builder creates temporary floor, Digger removes weak terrain.
-
-Tone: route planning replaces pure timing.
-
-Status: prototype implemented as `chapter_03_01.tscn` through `chapter_03_05.tscn`.
-
-| Level | Working Title | Abilities | Target | Main Idea | Failure Point |
-| --- | --- | --- | --- | --- | --- |
-| C3-1 | One Bridge | Builder x1 | Rescue 3/3 | Bridge a single gap on a straight route. | No bridge means pit deaths. |
-| C3-2 | Bridge Twice | Builder x2 | Rescue 3/3 | Bridge two separated gaps with time between them. | Missing either bridge fails. |
-| C3-3 | Weak Wall | Digger x1 | Rescue 3/3 | Dig one visible weak wall before the exit. | No dig means movers turn away. |
-| C3-4 | Dig, Then Bridge | Digger x1, Builder x1 | Rescue 3/3 | Open a wall, then bridge the gap behind it. | Using builder before digging wastes the route. |
-| C3-5 | Build the Exit Route | Blocker x1, Builder x1, Digger x1 | Rescue 2/3 | First chapter summary: hold group, dig path, bridge final gap. | Wrong order wastes limited abilities. |
-
-Implementation notes:
-
-- Weak walls should always use the same brown/orange visual language.
-- Bridge placement should have forgiving platform alignment.
-- C3-5 uses a center spawn with danger on the right and the exit on the far left, requiring Blocker -> Digger -> Builder in sequence.
-
-## Chapter 4: Vertical Space
-
-Purpose: teach long falls, parachutes, high walls, and routes split by height.
-
-Tone: slower reading, more vertical screen space, fewer movers.
-
-Status: prototype implemented as `chapter_04_01.tscn` through `chapter_04_05.tscn`.
-
-| Level | Working Title | Abilities | Target | Main Idea | Failure Point |
-| --- | --- | --- | --- | --- | --- |
-| C4-1 | Soft Landing | Parachute x1 | Rescue 1/1 | Use parachute before a long fall. | Landing without parachute kills the mover. |
-| C4-2 | High Step | Climber x1 | Rescue 1/1 | Climb a wall to a higher platform. | No climb means wall turn and timeout. |
-| C4-3 | Hold the Landing | Parachute x1, Blocker x1 | Rescue 2/3 | Save one mover via parachute on the right drop, then block to redirect another through the safe left route. | Blocker alone rescues only 1 (first dies at right drop, only third survives via left); parachute alone also only 1. |
-| C4-4 | Climb to Build | Climber x1, Builder x1 | Rescue 1/1 | Climb to upper route, then bridge an upper gap. | Builder before climb is useless. |
-| C4-5 | Split Heights | Parachute x1, Climber x1 | Rescue 2/2 | Two movers split: one climbs to upper exit, one parachutes to lower exit. | Assigning the wrong ability to the wrong mover fails. |
-
-Implementation notes:
-
-- C4-3 redesigned with a three-tier structure: upper (spawn), middle (safe left drop), lower (exit). Right drop is deadly (250px), left route uses two safe drops (<200px each). Blocker alone maxes at 1 rescued; both abilities needed for 2.
-- C4-5 uses two separate Exit nodes (upper and lower) feeding the same rescue counter.
-- Vertical drops marked in red for deadly falls, orange/yellow for safe transitions.
-
-## Chapter 5: Combined Rescue
-
-Purpose: use two to three abilities per level in full puzzle form.
-
-Tone: real game levels, still readable and fair.
-
-Status: prototype implemented as `chapter_05_01.tscn` through `chapter_05_04.tscn`; the previous C5-5 all-abilities capstone was removed because its greybox routes were not stable enough.
-
-| Level | Working Title | Abilities | Target | Main Idea | Failure Point |
-| --- | --- | --- | --- | --- | --- |
-| C5-1 | Store and Release | Blocker x1, Digger x1 | Rescue 2/3 | Store the group with Blocker, dig open the intended route. | Digging without turning the group is too late or useless. |
-| C5-2 | Over and Under | Climber x1, Digger x1 | Rescue 1/1 | Climb to a high route, dig through the obstacle near the exit. | Wrong order returns mover to low route. |
-| C5-3 | Bridge the Drop | Parachute x1, Builder x1 | Rescue 1/1 | Survive a fall, then build out of the landing platform. | Bridge before landing is wasted. |
-| C5-4 | Three-Step Route | Blocker x1, Digger x1, Builder x1 | Rescue 2/3 | Turn group, open weak wall, bridge final gap. | Wrong ability order fails. |
-
-Implementation notes:
-
-- Use visual staging: each ability point should be visible before the player reaches it.
-- Avoid simultaneous crises until the game has pause or speed controls.
-
-## Naming and File Plan
-
-Use this scene naming scheme:
-
-| Chapter | Scene Prefix | Example |
+| 用户阶段 | 产品目标 | 对应章节 |
 | --- | --- | --- |
-| Chapter 1 | `chapter_01_` | `res://levels/chapter_01_01.tscn` |
-| Chapter 2 | `chapter_02_` | `res://levels/chapter_02_01.tscn` |
-| Chapter 3 | `chapter_03_` | `res://levels/chapter_03_01.tscn` |
-| Chapter 4 | `chapter_04_` | `res://levels/chapter_04_01.tscn` |
-| Chapter 5 | `chapter_05_` | `res://levels/chapter_05_01.tscn` |
+| 观察系统规则 | 用户理解角色会自动行走、碰墙转向、掉落死亡、进入出口获救 | Chapter 1 |
+| 第一次干预系统 | 用户学习用 Blocker 改变队伍方向，并接受有限牺牲 | Chapter 2 |
+| 建造和修改路线 | 用户学习 Builder / Digger，把地形从障碍转成路线 | Chapter 3 |
+| 理解垂直空间 | 用户学习 Parachute / Climber，处理长落差和高台 | Chapter 4 |
+| 组合能力完成任务 | 用户按顺序组合两到三种能力，形成完整解谜流程 | Chapter 5 |
 
-Prototype levels 01-15 remain reference scenes. New chapter scenes should not overwrite them.
+设计价值：
 
-## Data Plan
+- Chapter 1-2 类似新手引导：先让用户理解系统默认行为，再给出第一种可控输入。
+- Chapter 3-4 类似核心功能教学：每个功能都要有独立场景、反馈和失败解释。
+- Chapter 5 类似多步骤流程：用户需要理解能力顺序和组合依赖。
 
-When implementation begins:
+## 3. 章节设计原则
 
-- Keep `data/levels.json` for the active playable sequence.
-- Add chapter metadata fields only if needed later, such as `chapter_id`, `chapter_title`, and `chapter_order`.
-- During early phase 9 implementation, point `current_entry_scene` and `project.godot` at the newest chapter level.
-- After a full chapter is playable, set `first_level_scene` or the title screen target to the first level of that chapter for full-run testing.
+- 一次只教一个机制。新概念必须先单独出现，再进入组合关。
+- 每关有一个主要失败原因。失败后玩家应该知道下一次改哪里。
+- 能力次数接近最小解。次数太宽松会削弱决策，太紧会变成手速测试。
+- 允许牺牲，但牺牲必须有意义。救援目标低于总人数时，要服务于路线控制或队伍管理。
+- 关卡名、地形和能力次数共同暗示解法，但不直接给答案。
+- 任何新增或修改关卡都要同步 `data/levels.json` 和 `docs/level_catalog.md`。
 
-## Immediate Next Step
+## 4. Chapter 1：First Rescue
 
-Playtest Chapter 5 from the current debug entry:
+用户目标：在没有能力按钮的情况下理解系统基础规则。
 
-- `res://levels/chapter_05_01.tscn`
-- `res://levels/chapter_05_02.tscn`
-- `res://levels/chapter_05_03.tscn`
-- `res://levels/chapter_05_04.tscn`
+产品意图：
 
-Focus the next pass on blocker timing and dig reach (C5-1), climb landing and dig reach (C5-2), parachute landing and bridge alignment (C5-3), and three-step order readability (C5-4). If Chapter 5 is accepted, move into Phase 10 game-flow work.
+- 降低新用户认知负担。
+- 先证明“角色自动行走 + 出口救援”是可理解的。
+- 让缺口和墙体作为未来机制预告，而不是立即要求操作。
+
+| 关卡 | 标题 | 能力 | 教学目标 | 失败反馈 |
+| --- | --- | --- | --- | --- |
+| C1-1 | Walk Home | 无 | 自动行走与出口 | 理论上只因时间配置错误失败 |
+| C1-2 | Mind the Edge | 无 | 可见缺口预告 | 出口路径错误时会走进危险 |
+| C1-3 | The Long Floor | 无 | 更长队列和等待时间 | 路线过慢会触发时间限制 |
+| C1-4 | First Turn | 无 | 撞墙转向 | 墙体/出口位置错误会困住队伍 |
+
+验收标准：
+
+- 玩家无需阅读说明即可理解目标是“让角色进出口”。
+- 不出现能力按钮，避免过早增加认知负担。
+
+## 5. Chapter 2：Holding the Crowd
+
+用户目标：学习第一次主动干预系统，用 Blocker 管理队伍方向。
+
+产品意图：
+
+- 引入“牺牲一个角色换取队伍安全”的核心策略。
+- 让玩家理解能力次数和救援目标之间的关系。
+- 从单层平台逐步过渡到下落后的队伍控制。
+
+| 关卡 | 标题 | 能力 | 教学目标 | 失败反馈 |
+| --- | --- | --- | --- | --- |
+| C2-1 | Stand Here | Blocker x1 | 第一次阻挡者牺牲 | 不阻挡会掉入右侧坑 |
+| C2-2 | Lower Shelf | Blocker x1 | 下落后再阻挡 | 在错误层级阻挡会堵住路线 |
+| C2-3 | Two-Way Lesson | Blocker x2 | 宽地板双向风险 | 过早花掉 Blocker 会失控 |
+| C2-4 | Crowd Control | Blocker x1 | 章节小结，严格救援目标 | 阻挡太晚会损失超过允许数量 |
+
+验收标准：
+
+- 玩家能理解 Blocker 不是失败角色，而是路线控制工具。
+- 救援目标低于总人数时，牺牲逻辑必须清楚。
+
+## 6. Chapter 3：Building and Digging
+
+用户目标：学习主动建造路线和修改地形。
+
+产品意图：
+
+- 从“改变队伍方向”升级到“改变地图可通行性”。
+- Builder 教学补全缺口，Digger 教学打开弱墙。
+- 第 3 章末尾用三能力组合验证路线规划。
+
+| 关卡 | 标题 | 能力 | 教学目标 | 失败反馈 |
+| --- | --- | --- | --- | --- |
+| C3-1 | One Bridge | Builder x1 | 第一次搭桥 | 不搭桥会掉入缺口 |
+| C3-2 | Bridge Twice | Builder x2 | 连续搭桥 | 漏掉任意一座桥都会失败 |
+| C3-3 | Weak Wall | Digger x1 | 第一次挖弱墙 | 不挖会被墙体转向 |
+| C3-4 | Dig, Then Bridge | Digger x1, Builder x1 | 先打开墙，再跨缺口 | 顺序错误会浪费能力 |
+| C3-5 | Build the Exit Route | Blocker x1, Digger x1, Builder x1 | 队伍暂存 + 打开路线 + 搭桥 | 缺少任意能力都会失败 |
+
+验收标准：
+
+- 弱墙和普通墙必须视觉区分。
+- 动态桥梁必须看起来可站立，且视觉长度不能误导碰撞边界。
+
+## 7. Chapter 4：Vertical Space
+
+用户目标：学习高低平台、长落差和角色状态预设。
+
+产品意图：
+
+- 用少量角色降低操作压力，突出空间阅读。
+- Parachute 解决“长落差风险”。
+- Climber 解决“高墙路线”。
+- 后续组合关让玩家理解同一批角色可以走不同高度路线。
+
+| 关卡 | 标题 | 能力 | 教学目标 | 失败反馈 |
+| --- | --- | --- | --- | --- |
+| C4-1 | Soft Landing | Parachute x1 | 第一次长落差开伞 | 不开伞落地死亡 |
+| C4-2 | High Step | Climber x1 | 第一次攀爬高墙 | 不攀爬会转向或超时 |
+| C4-3 | Hold the Landing | Parachute x1, Blocker x1 | 保存一个角色，重定向另一个角色 | 单独使用任一能力都救援不足 |
+| C4-4 | Climb to Build | Climber x1, Builder x1 | 先爬上高处，再搭桥 | 先搭桥会浪费在错误路线 |
+| C4-5 | Split Heights | Parachute x1, Climber x1 | 两个角色分流到上下出口 | 把能力给错角色会失败 |
+
+验收标准：
+
+- 长落差应通过高度差和降落伞状态表达风险。
+- Climber 的“已赋予但未触发”状态必须可见。
+
+## 8. Chapter 5：Combined Rescue
+
+用户目标：使用两到三种能力完成完整谜题。
+
+产品意图：
+
+- 让关卡更接近正式游戏体验，而不是单能力教学。
+- 每关仍保持单一主解法，避免过早进入超高复杂度。
+- 验证玩家能否按顺序使用能力，而不是只识别单个按钮。
+
+| 关卡 | 标题 | 能力 | 教学目标 | 失败反馈 |
+| --- | --- | --- | --- | --- |
+| C5-1 | Store and Release | Blocker x1, Digger x1 | 先储存队伍，再打开路线 | 无 Blocker 会掉坑，无 Digger 路线关闭 |
+| C5-2 | Over and Under | Climber x1, Digger x1 | 先到高处，再挖弱墙 | 无 Climber 到不了上层，无 Digger 出口被挡 |
+| C5-3 | Bridge the Drop | Parachute x1, Builder x1 | 先安全落下，再搭桥离开 | 无 Parachute 会死亡，无 Builder 缺口不可过 |
+| C5-4 | Three-Step Route | Blocker x1, Digger x1, Builder x1 | 转向、挖墙、搭桥三步路线 | 顺序错误会浪费有限能力 |
+
+验收标准：
+
+- 玩家到达前应能看到每个能力使用点。
+- 多能力按钮同时出现时，选中态和剩余次数必须清晰。
+
+## 9. 数据化落地
+
+章节重构不是只改场景，还要进入数据结构：
+
+- `data/levels.json`：活跃关卡唯一数据源。
+- `docs/level_catalog.md`：人工可读版本，用于解释教学目标和失败逻辑。
+- `scripts/progress.gd`：读取关卡数据并记录进度。
+- `scenes/level_select.tscn`：基于数据源生成关卡列表和章节完成度。
+
+这使关卡从“写死的测试场景”变成“可配置、可展示、可迭代的产品内容”。
+
+## 10. 后续增强
+
+下一步优先：
+
+- 增加行为埋点：失败次数、重开次数、能力使用顺序、每关用时。
+- 增加 LLM 分层提示：根据玩家失败原因生成轻提示、中提示和完整思路。
+- 增加竞品分析：对比 Lemmings、Baba Is You、Human Fall Flat 的教学路径和失败反馈。
+- 导出 Web 试玩版：让项目从“可描述”变成“可点击体验”。
+
