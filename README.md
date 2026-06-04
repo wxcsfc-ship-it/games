@@ -1,5 +1,7 @@
 # Pathlings
 
+[中文](README.zh-CN.md) | English
+
 Pathlings is a 2D strategy puzzle game prototype built with Godot 4. The player does not directly steer the characters. Instead, each character walks automatically, and the player uses limited abilities to redirect the group, build routes, remove weak terrain, survive drops, and reach the exit before the level fails.
 
 The current build contains 5 chapters and 22 active levels, with an emphasis on readable puzzle flow, gradual ability teaching, and lightweight progression tracking.
